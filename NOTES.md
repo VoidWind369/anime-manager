@@ -52,3 +52,18 @@
 - `Settings.svelte` 新增「标题栏透明度」滑块（0% ~ 100%）
 - `App.svelte` 新增 `titlebarOpacity` 状态、`applyTitlebarOpacity()` 函数、localStorage 持久化
 - 「实色」选项描述从「不透明」改为「无模糊」
+
+### 11. 修复标题栏透明度影响文字（TitleBar.svelte + styles.css）
+
+- 将 `opacity` 从 `.custom-title-bar` 元素移至 `::before` 伪元素，仅控制背景透明度
+- 更新 `styles.css` 中毛玻璃模式的标题栏样式，`background` 改为作用于 `::before`
+- 更新暗色模式标题栏样式，`background` 同样改为作用于 `::before`
+
+### 12. 修复标题栏透明度100%仍透明的bug（styles.css）
+
+- `:root` 默认 `--titlebar-bg` 从半透明 rgba 渐变改为不透明渐变 `var(--accent-50)` / `var(--accent-100)`
+- `--titlebar-opacity` 默认值从 `0.8` 改为 `1`
+- `--titlebar-border` 从 `rgba(var(--accent-rgb), 0.15)` 改为 `var(--accent-200)`
+- 暗色模式标题栏背景同样改为不透明渐变
+
+之前 `--titlebar-bg` 使用 `rgba(..., 0.08/0.04)` 低 alpha 值，opacity 滑块叠加后仍无法达到完全不透明。修复后 opacity 滑块能正确控制透明度（0%=全透明，100%=全不透明）。
