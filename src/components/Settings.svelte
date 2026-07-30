@@ -285,7 +285,7 @@
               type="range"
               min="0.1"
               max="1"
-              step="0.05"
+              step="0.01"
               value={bgOpacity}
               on:input={(e) => onChangeBgOpacity(parseFloat(e.currentTarget.value))}
             />
@@ -316,7 +316,7 @@
           type="range"
           min="0.2"
           max="1"
-          step="0.05"
+          step="0.01"
           value={cardOpacity}
           on:input={(e) => onChangeCardOpacity(parseFloat(e.currentTarget.value))}
         />
@@ -329,7 +329,7 @@
           type="range"
           min="0"
           max="1"
-          step="0.05"
+          step="0.01"
           value={titlebarOpacity}
           on:input={(e) => onChangeTitlebarOpacity(parseFloat(e.currentTarget.value))}
         />
