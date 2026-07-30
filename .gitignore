@@ -1,0 +1,56 @@
+node_modules
+dist
+dist-ssr
+*.local
+
+# Tauri
+src-tauri/target
+src-tauri/Cargo.lock
+src-tauri/gen
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Python scripts and test files
+*.py
+__pycache__/
+*.pyc
+
+# Test HTML pages
+test_*.html
+bing_test.html
+douban_search.html
+moegirl_page.html
+moegirl_roshidere.html
+
+# Screenshots and images
+*.png.jpg
+*.png
+*.jpg
+*.jpeg
+
+# JSON test data
+test_*.json
+
+# Rust test files
+src-tauri/test_*.rs
