@@ -54,3 +54,9 @@ test_*.json
 
 # Rust test files
 src-tauri/test_*.rs
+src-tauri/test_*.exe
+src-tauri/test_*.pdb
+
+# Database files
+*.db
+*.db-journal
