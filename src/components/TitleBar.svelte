@@ -101,11 +101,18 @@
     align-items: center;
     height: 48px;
     padding: 0 12px;
-    background: var(--titlebar-bg);
-    opacity: var(--titlebar-opacity, 1);
+    position: relative;
     border-bottom: none;
     user-select: none;
     cursor: default;
+  }
+  .custom-title-bar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--titlebar-bg);
+    opacity: var(--titlebar-opacity, 1);
+    z-index: -1;
   }
   .custom-title-bar button {
     background: transparent !important;
@@ -324,8 +331,10 @@
     color: white;
   }
 
-  :global([data-theme="dark"]) .custom-title-bar {
+  :global([data-theme="dark"]) .custom-title-bar::before {
     background: var(--titlebar-bg-dark);
+  }
+  :global([data-theme="dark"]) .custom-title-bar {
     border-bottom-color: var(--border);
   }
 
