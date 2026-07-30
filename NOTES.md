@@ -43,3 +43,12 @@
 - `App.svelte`：删除 `buttonStyle` 状态变量、`loadSetting("btn-style")`、`applyButtonStyle()` 函数、传递给 Settings 的 props
 - `styles.css`：删除整个 `[data-btn-style]` 选择器块（flat + outline 共 57 行）
 - `index.html`：删除 `data-btn-style="gradient"` 属性
+
+### 10. 标题栏透明度独立控制（全局）
+
+- 修改 `styles.css` `:root` 默认 `--titlebar-bg` 为半透明渐变，所有玻璃模式下标题栏都透明
+- 移除 `translucent` 和 `glass` 模式对 `--titlebar-bg` 的覆盖（仅保留 blur 差异）
+- 新增 `--titlebar-opacity` CSS 变量，`TitleBar.svelte` 应用 `opacity: var(--titlebar-opacity)`
+- `Settings.svelte` 新增「标题栏透明度」滑块（0% ~ 100%）
+- `App.svelte` 新增 `titlebarOpacity` 状态、`applyTitlebarOpacity()` 函数、localStorage 持久化
+- 「实色」选项描述从「不透明」改为「无模糊」

@@ -23,6 +23,7 @@
   let customBgUrl = "";
   let bgOpacity = 0.5;
   let cardOpacity = 1;
+  let titlebarOpacity = 0.8;
 
   let showModal = false;
   let modalTitle = "";
@@ -94,6 +95,8 @@
     applyBgOpacity(bgOpacity);
     cardOpacity = parseFloat(loadSetting("card-opacity", "1")) || 1;
     applyCardOpacity(cardOpacity);
+    titlebarOpacity = parseFloat(loadSetting("titlebar-opacity", "0.8")) || 0.8;
+    applyTitlebarOpacity(titlebarOpacity);
     applyTheme(loadTheme());
     await loadSettings();
     await loadAnimeList();
@@ -173,6 +176,11 @@
     bgOpacity = Math.max(0.1, Math.min(1, v));
     document.documentElement.style.setProperty("--bg-image-opacity", String(bgOpacity));
     try { localStorage.setItem("bg-opacity", String(bgOpacity)); } catch (_) {}
+  }
+  function applyTitlebarOpacity(v: number) {
+    titlebarOpacity = Math.max(0, Math.min(1, v));
+    document.documentElement.style.setProperty("--titlebar-opacity", String(titlebarOpacity));
+    try { localStorage.setItem("titlebar-opacity", String(titlebarOpacity)); } catch (_) {}
   }
   function applyBgStyle(v: string, url?: string) {
     bgStyle = v;
@@ -282,6 +290,8 @@
         onChangeBgOpacity={applyBgOpacity}
         cardOpacity={cardOpacity}
         onChangeCardOpacity={applyCardOpacity}
+        titlebarOpacity={titlebarOpacity}
+        onChangeTitlebarOpacity={applyTitlebarOpacity}
       />
     {/if}
   </main>

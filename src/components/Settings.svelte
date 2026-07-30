@@ -22,6 +22,8 @@
   export let onChangeRadiusScale: (v: number) => void;
   export let cardOpacity: number = 1;
   export let onChangeCardOpacity: (v: number) => void;
+  export let titlebarOpacity: number = 0.8;
+  export let onChangeTitlebarOpacity: (v: number) => void;
 
   let libraryPath = initialPath;
   let isSaving = false;
@@ -54,7 +56,7 @@
   ];
 
   const glassOptions = [
-    { id: "solid", name: "实色", desc: "不透明" },
+    { id: "solid", name: "实色", desc: "无模糊" },
     { id: "translucent", name: "半透", desc: "轻微毛玻璃" },
     { id: "glass", name: "玻璃态", desc: "强毛玻璃" },
   ];
@@ -321,6 +323,19 @@
         <span class="slider-value">{Math.round(cardOpacity * 100)}%</span>
       </div>
       <p class="hint">拖动滑块调整卡片不透明度，范围 20% ~ 100%</p>
+      <div class="slider-row">
+        <span class="slider-label">标题栏透明度</span>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.05"
+          value={titlebarOpacity}
+          on:input={(e) => onChangeTitlebarOpacity(parseFloat(e.currentTarget.value))}
+        />
+        <span class="slider-value">{Math.round(titlebarOpacity * 100)}%</span>
+      </div>
+      <p class="hint">拖动滑块调整标题栏透明度，范围 0% ~ 100%</p>
     </div>
 
     <div class="setting-row">

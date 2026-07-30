@@ -102,6 +102,7 @@
     height: 48px;
     padding: 0 12px;
     background: var(--titlebar-bg);
+    opacity: var(--titlebar-opacity, 1);
     border-bottom: none;
     user-select: none;
     cursor: default;

@@ -1027,10 +1027,11 @@ input:focus {
   --card-border: 1px solid var(--border);
   --glass-blur: 0px;
   --glass-bg: var(--surface);
-  --titlebar-bg: linear-gradient(135deg, var(--accent-50), var(--accent-100));
-  --titlebar-border: 1px solid var(--accent-200);
-  --titlebar-bg-dark: linear-gradient(135deg, var(--surface-dim), var(--surface));
+  --titlebar-bg: linear-gradient(135deg, rgba(var(--accent-rgb), 0.08), rgba(var(--accent-rgb), 0.04));
+  --titlebar-border: 1px solid rgba(var(--accent-rgb), 0.15);
+  --titlebar-bg-dark: linear-gradient(135deg, rgba(var(--surface-dim), 0.8), rgba(var(--surface), 0.8));
   --titlebar-border-dark: 1px solid var(--border);
+  --titlebar-opacity: 0.8;
   --modal-bg: var(--surface);
   --modal-shadow: var(--shadow-lg);
   --bg-overlay: none;
@@ -1101,16 +1102,12 @@ body::after {
   --glass-bg: var(--surface-glass);
   --glass-blur: 8px;
   --modal-bg: var(--surface-glass);
-  --titlebar-bg: linear-gradient(135deg, rgba(var(--accent-rgb), 0.08), rgba(var(--accent-rgb), 0.04));
-  --titlebar-bg-dark: linear-gradient(135deg, rgba(var(--surface-dim), 0.8), rgba(var(--surface), 0.8));
 }
 [data-glass="glass"] {
   --card-bg: color-mix(in srgb, var(--surface-glass) calc(var(--card-opacity) * 100%), transparent);
   --glass-bg: var(--surface-glass);
   --glass-blur: 16px;
   --modal-bg: var(--surface-glass);
-  --titlebar-bg: linear-gradient(135deg, rgba(var(--accent-rgb), 0.12), rgba(var(--accent-rgb), 0.06));
-  --titlebar-bg-dark: linear-gradient(135deg, rgba(var(--surface-dim), 0.65), rgba(var(--surface), 0.65));
 }
 
 /* 应用毛玻璃到卡片 */
