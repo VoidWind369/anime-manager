@@ -1,5 +1,5 @@
 [package]
-name = "anime-manager"
+name = "AnimeManager"
 version = "0.1.0"
 description = "本地动漫资源管理器"
 authors = ["you"]

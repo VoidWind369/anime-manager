@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "动漫管理器",
+  "productName": "AnimeManager",
   "version": "0.1.0",
   "identifier": "com.animemanager.app",
   "build": {

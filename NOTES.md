@@ -71,3 +71,9 @@
 ### 13. 透明度滑块改为1%递进（Settings.svelte）
 
 背景透明度、卡片透明度、标题栏透明度三个滑块的 `step` 从 `0.05` 改为 `0.01`，支持更精细的透明度调节。
+
+### 14. 修改 exe 文件名为 AnimeManager（tauri.conf.json + Cargo.toml）
+
+- `tauri.conf.json` `productName` 从 `动漫管理器` 改为 `AnimeManager`
+- `Cargo.toml` `name` 从 `anime-manager` 改为 `AnimeManager`
+- 编译输出从 `anime-manager.exe` 改为 `AnimeManager.exe`
