@@ -644,7 +644,7 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--space-3) var(--space-5);
-    background: var(--surface-dim);
+    background: var(--card-bg-dim);
     border-bottom: 1px solid var(--border);
   }
 
@@ -728,7 +728,7 @@
   }
 
   .ep-row:hover {
-    background: var(--surface-dim);
+    background: var(--card-bg-hover);
   }
 
   .ep-row.watched { opacity: 0.45; }
@@ -906,7 +906,7 @@
   }
 
   :global([data-theme="dark"]) .version-header {
-    background: var(--surface-dim);
+    background: var(--card-bg-dim);
     border-color: var(--border);
   }
 

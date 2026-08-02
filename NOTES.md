@@ -78,6 +78,10 @@
 - `Cargo.toml` `name` 从 `anime-manager` 改为 `AnimeManager`
 - 编译输出从 `anime-manager.exe` 改为 `AnimeManager.exe`
 
-### 15. 剧集列表纳入卡片透明度控制（AnimeDetail.svelte）
+### 15. 剧集列表纳入卡片透明度控制（styles.css + AnimeDetail.svelte）
 
-`.version-group` 背景从 `var(--surface)` 改为 `var(--card-bg)`（包括暗色模式），使版本组整体（含剧集列表）跟随卡片透明度滑块调整。
+- `styles.css` 新增 `--card-bg-dim` 和 `--card-bg-hover` 变量，与 `--card-opacity` 联动
+- `.version-group` 背景从 `var(--surface)` 改为 `var(--card-bg)`
+- `.version-header` 背景从 `var(--surface-dim)` 改为 `var(--card-bg-dim)`
+- `.ep-row:hover` 背景从 `var(--surface-dim)` 改为 `var(--card-bg-hover)`
+- 以上修改均含暗色模式适配

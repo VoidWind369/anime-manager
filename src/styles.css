@@ -1024,6 +1024,8 @@ input:focus {
   --card-shadow-hover: var(--shadow-lg);
   --card-opacity: 1;
   --card-bg: color-mix(in srgb, var(--surface) calc(var(--card-opacity) * 100%), transparent);
+  --card-bg-dim: color-mix(in srgb, var(--surface-dim) calc(var(--card-opacity) * 100%), transparent);
+  --card-bg-hover: color-mix(in srgb, var(--surface-dim) calc(var(--card-opacity) * 70%), transparent);
   --card-border: 1px solid var(--border);
   --glass-blur: 0px;
   --glass-bg: var(--surface);
