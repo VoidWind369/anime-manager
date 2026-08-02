@@ -710,6 +710,7 @@
     display: flex;
     flex-direction: column;
     padding: var(--space-2) 0;
+    background: var(--card-bg);
   }
 
   .ep-row-empty {

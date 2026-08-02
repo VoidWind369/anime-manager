@@ -77,3 +77,7 @@
 - `tauri.conf.json` `productName` 从 `动漫管理器` 改为 `AnimeManager`
 - `Cargo.toml` `name` 从 `anime-manager` 改为 `AnimeManager`
 - 编译输出从 `anime-manager.exe` 改为 `AnimeManager.exe`
+
+### 15. 剧集列表纳入卡片透明度控制（AnimeDetail.svelte）
+
+`.ep-list` 添加 `background: var(--card-bg)`，使剧集列表跟随卡片透明度滑块调整。
