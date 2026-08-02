@@ -633,7 +633,7 @@
   }
 
   .version-group {
-    background: var(--surface);
+    background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     overflow: hidden;
@@ -710,7 +710,6 @@
     display: flex;
     flex-direction: column;
     padding: var(--space-2) 0;
-    background: var(--card-bg);
   }
 
   .ep-row-empty {
@@ -902,7 +901,7 @@
 
   /* 版本组暗色 */
   :global([data-theme="dark"]) .version-group {
-    background: var(--surface);
+    background: var(--card-bg);
     border-color: var(--border);
   }
 

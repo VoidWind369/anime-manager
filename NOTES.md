@@ -80,4 +80,4 @@
 
 ### 15. 剧集列表纳入卡片透明度控制（AnimeDetail.svelte）
 
-`.ep-list` 添加 `background: var(--card-bg)`，使剧集列表跟随卡片透明度滑块调整。
+`.version-group` 背景从 `var(--surface)` 改为 `var(--card-bg)`（包括暗色模式），使版本组整体（含剧集列表）跟随卡片透明度滑块调整。
