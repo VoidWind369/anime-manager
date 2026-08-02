@@ -963,7 +963,7 @@
   }
 
   :global([data-theme="dark"]) .ep-row:hover {
-    background: var(--surface-dim);
+    background: var(--card-bg-hover);
   }
 
   :global([data-theme="dark"]) .ep-name {
