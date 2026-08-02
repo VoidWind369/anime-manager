@@ -84,4 +84,5 @@
 - `.version-group` 背景从 `var(--surface)` 改为 `var(--card-bg)`
 - `.version-header` 背景从 `var(--surface-dim)` 改为 `var(--card-bg-dim)`
 - `.ep-row:hover` 背景从 `var(--surface-dim)` 改为 `var(--card-bg-hover)`
+- 暗色模式 `.ep-row:hover` 从 `var(--surface-dim)` 改为 `var(--card-bg-hover)`
 - 以上修改均含暗色模式适配
