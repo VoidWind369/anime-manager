@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { _ } from "svelte-i18n";
   import type { Anime } from "../types/anime";
   import { loadCoverImage } from "../utils/image";
 
@@ -141,8 +142,8 @@
         <path d="M8 21h8M12 17v4"/>
       </svg>
     </div>
-    <h2>动漫库为空</h2>
-    <p>点击右上角"扫描库"开始扫描</p>
+    <h2>{$_('library.empty')}</h2>
+    <p>{$_('library.emptyHint')}</p>
   </div>
 {:else}
   <div class="anime-grid">
@@ -169,7 +170,7 @@
           {#if g.seasonCount > 1}
             <div class="season-badge">
               <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-              {g.seasonCount} 季
+              {g.seasonCount} {$_('library.season')}
             </div>
           {/if}
         </div>
@@ -181,9 +182,9 @@
             >{g.title}</p>
           </div>
           <div class="card-meta">
-            <span class="meta-ep">{g.totalEpisodes} 集</span>
+            <span class="meta-ep">{g.totalEpisodes} {$_('library.episodes')}</span>
             {#if g.versions.length > 1 && g.seasonCount <= 1}
-              <span class="meta-sub">{g.versions.length} 个版本</span>
+              <span class="meta-sub">{g.versions.length} {$_('library.versions')}</span>
             {/if}
           </div>
         </div>

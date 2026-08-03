@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { invoke } from "../utils/tauri-adapter";
+  import { _ } from "svelte-i18n";
   import type { Anime, Episode } from "../types/anime";
   import { loadCoverImage } from "../utils/image";
 
@@ -159,7 +160,7 @@
 
   async function playEpisode(episode: Episode) {
     try { await invoke("play_episode", { episodeId: episode.id }); }
-    catch (e) { showMessage("播放失败", `${e}`); }
+    catch (e) { showMessage($_('detail.playFailed'), `${e}`); }
   }
 
   async function toggleWatched(episode: Episode) {
@@ -182,8 +183,8 @@
   }
 
   function seasonLabel(season: number, isMovie: boolean): string {
-    if (isMovie) return "剧场版";
-    return `第${season}季`;
+    if (isMovie) return $_('detail.movie');
+    return $_('detail.seasonLabel', { values: { season } });
   }
 </script>
 
@@ -203,7 +204,7 @@
       on:click={() => navigator.clipboard.writeText(anime.title)}
     >{anime.title}</h1>
       {#if originalName}
-        <p class="hero-original">原名: {originalName}</p>
+        <p class="hero-original">{$_('detail.originalName')}{originalName}</p>
       {/if}
       <div class="hero-tags">
         <span class="tag-primary">
@@ -224,7 +225,7 @@
           {/each}
         {/if}
         {#if allVersions.length > 1}
-          <span class="tag-version">{allVersions.length} 个版本 / {seasonGroups.length} 季</span>
+          <span class="tag-version">{allVersions.length} {$_('detail.versionsCount')} / {seasonGroups.length} {$_('detail.seasonsCount')}</span>
         {/if}
       </div>
       {#if anime.description}
@@ -236,18 +237,18 @@
   <!-- 剧集列表（季选项卡 + 字幕组分页） -->
   <section class="ep-section">
     <div class="ep-heading-row">
-      <h2 class="ep-heading">剧集列表</h2>
+      <h2 class="ep-heading">{$_('detail.episodeList')}</h2>
       <span class="ep-count">
-        共 {totalEpisodesAll} 集 /
-        已看 {watchedEpisodesAll} 集
+        {$_('detail.totalEpisodes', { values: { total: totalEpisodesAll } })} /
+        {$_('detail.watchedEpisodes', { values: { count: watchedEpisodesAll } })}
       </span>
     </div>
 
     {#if isLoading}
-      <div class="ep-loading">加载中...</div>
+      <div class="ep-loading">{$_('app.loading')}</div>
     {:else if seasonGroups.length === 0}
       <div class="ep-empty">
-        <p>未找到视频文件</p>
+        <p>{$_('detail.noVideoFiles')}</p>
         <span class="ep-hint">mp4 / mkv / avi / mov / wmv / flv / webm / rmvb / m4v</span>
       </div>
     {:else}
@@ -283,7 +284,7 @@
                 {#if vg.anime.subtitle_group}
                   <span class="vtab-group">{vg.anime.subtitle_group}</span>
                 {:else}
-                  <span class="vtab-group unknown">未知字幕组</span>
+                  <span class="vtab-group unknown">{$_('detail.unknownGroup')}</span>
                 {/if}
                 <span class="vtab-count">{vg.episodes.length}</span>
               </button>
@@ -303,19 +304,19 @@
                     <span class="version-sub-tag">{g.trim()}</span>
                   {/each}
                 {:else}
-                  <span class="version-sub-tag unknown">未知字幕组</span>
+                  <span class="version-sub-tag unknown">{$_('detail.unknownGroup')}</span>
                 {/if}
-                <span class="version-ep-count">{activeVersion.episodes.length} 集</span>
+                <span class="version-ep-count">{activeVersion.episodes.length} {$_('library.episodes')}</span>
               </div>
-              <button class="version-dir-btn" on:click={() => openDirectory(activeVersion.anime.directory_path)} title="打开此版本目录">
+              <button class="version-dir-btn" on:click={() => openDirectory(activeVersion.anime.directory_path)} title={$_('detail.openDirectory')}>
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                目录
+                {$_('detail.directory')}
               </button>
             </div>
 
             <div class="ep-list">
               {#if activeVersion.episodes.length === 0}
-                <div class="ep-row-empty">暂无剧集文件</div>
+                <div class="ep-row-empty">{$_('detail.noEpisodes')}</div>
               {:else}
                 {#each activeVersion.episodes as ep (ep.id)}
                   <div class="ep-row" class:watched={ep.watched}>
@@ -325,14 +326,14 @@
                       on:click={(e) => { e.stopPropagation(); navigator.clipboard.writeText(ep.title); }}
                     >{ep.title}</span>
                     <div class="ep-actions">
-                      <button class="play-btn" on:click={() => playEpisode(ep)} aria-label="播放">
+                      <button class="play-btn" on:click={() => playEpisode(ep)} aria-label={$_('detail.play')}>
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                       </button>
                       <button
                         class="watch-btn"
                         class:done={ep.watched}
                         on:click={() => toggleWatched(ep)}
-                        aria-label={ep.watched ? "标记未看" : "标记已看"}
+                        aria-label={ep.watched ? $_('detail.markUnwatched') : $_('detail.markWatched')}
                       >
                         {#if ep.watched}
                           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>

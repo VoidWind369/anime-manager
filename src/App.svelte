@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { invoke } from "./utils/tauri-adapter";
+  import { _ } from "svelte-i18n";
+  import "./i18n/index";
   import TitleBar from "./components/TitleBar.svelte";
   import AnimeLibrary from "./components/AnimeLibrary.svelte";
   import AnimeDetail from "./components/AnimeDetail.svelte";
@@ -235,10 +237,10 @@
     try {
       const result = await invoke<ScanResult>("scan_library", { path: libraryPath });
       await loadAnimeList();
-      let msg = `扫描完成，共 ${result.total} 部（新增 ${result.added}，更新 ${result.updated}）`;
-      if (result.removed > 0) msg += `，已清理 ${result.removed} 个失效目录`;
-      showMessage("扫描完成", msg);
-    } catch (e) { showMessage("扫描失败", `${e}`); }
+      let msg = $_('scan.result', { values: { total: result.total, added: result.added, updated: result.updated } });
+      if (result.removed > 0) msg += $_('scan.cleaned', { values: { removed: result.removed } });
+      showMessage($_('scan.scanComplete'), msg);
+    } catch (e) { showMessage($_('scan.scanFailed'), `${e}`); }
     finally { isScanning = false; }
   }
 
@@ -311,10 +313,10 @@
       </div>
       <div class="modal-footer">
         {#if showConfirm}
-          <button class="modal-cancel" on:click={closeModal}>取消</button>
-          <button class="modal-confirm" on:click={handleConfirm}>确定</button>
+          <button class="modal-cancel" on:click={closeModal}>{$_('app.cancel')}</button>
+          <button class="modal-confirm" on:click={handleConfirm}>{$_('app.confirm')}</button>
         {:else}
-          <button class="modal-confirm" on:click={closeModal}>确定</button>
+          <button class="modal-confirm" on:click={closeModal}>{$_('app.ok')}</button>
         {/if}
       </div>
     </div>

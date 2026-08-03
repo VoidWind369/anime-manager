@@ -1,5 +1,6 @@
 <script lang="ts">
   import { invoke } from "../utils/tauri-adapter";
+  import { _ } from "svelte-i18n";
 
   export let isDark: boolean;
   export let onToggleTheme: () => void;
@@ -31,7 +32,7 @@
     <button 
       class="back-btn" 
       on:click={onBack} 
-      aria-label="返回"
+      aria-label={$_('titlebar.back')}
     >
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </button>
@@ -46,7 +47,7 @@
       </svg>
     </div>
     <span class="app-title">
-      {#if currentView === "library"}动漫管理器{:else if currentView === "detail"}{detailTitle}{:else}设置{/if}
+      {#if currentView === "library"}{$_('app.title')}{:else if currentView === "detail"}{detailTitle}{:else}{$_('titlebar.settings')}{/if}
     </span>
   </div>
 
@@ -54,14 +55,14 @@
     <div class="title-bar-center">
       <div class="search-box">
         <svg class="search-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="text" placeholder="搜索..." bind:value={searchQuery} />
+        <input type="text" placeholder={$_('titlebar.search')} bind:value={searchQuery} />
       </div>
     </div>
   {/if}
 
   <div class="title-bar-right">
     {#if currentView === "library"}
-      <button on:click={onScan} disabled={isScanning} class="scan-btn" aria-label={isScanning ? "扫描中" : "扫描库"}>
+      <button on:click={onScan} disabled={isScanning} class="scan-btn" aria-label={isScanning ? $_('scan.scanning') : $_('scan.scanLibrary')}>
         {#if isScanning}
           <span class="spinner"></span>
         {:else}
@@ -70,11 +71,11 @@
       </button>
     {/if}
     {#if currentView !== "settings"}
-      <button class="ghost-icon-btn" on:click={onSettings} aria-label="设置">
+      <button class="ghost-icon-btn" on:click={onSettings} aria-label={$_('titlebar.settings')}>
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.01.6.46 1.1 1 1.2h.09a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
     {/if}
-    <button class="ghost-icon-btn theme-toggle" on:click={onToggleTheme} aria-label={isDark ? "切换亮色模式" : "切换暗色模式"}>
+    <button class="ghost-icon-btn theme-toggle" on:click={onToggleTheme} aria-label={isDark ? $_('titlebar.toggleLight') : $_('titlebar.toggleDark')}>
       {#if isDark}
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="m4.22 4.22 1.42 1.42"/><path d="m18.36 18.36 1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="m6.34 17.66-1.42 1.42"/><path d="m19.78 4.22-1.42 1.42"/></svg>
       {:else}
@@ -82,13 +83,13 @@
       {/if}
     </button>
 
-    <button class="window-btn minimize" on:click={minimizeWindow} aria-label="最小化">
+    <button class="window-btn minimize" on:click={minimizeWindow} aria-label={$_('titlebar.minimize')}>
       <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16"/></svg>
     </button>
-    <button class="window-btn maximize" on:click={maximizeWindow} aria-label="最大化">
+    <button class="window-btn maximize" on:click={maximizeWindow} aria-label={$_('titlebar.maximize')}>
       <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
     </button>
-    <button class="window-btn close" on:click={closeWindow} aria-label="关闭">
+    <button class="window-btn close" on:click={closeWindow} aria-label={$_('titlebar.close')}>
       <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
     </button>
   </div>

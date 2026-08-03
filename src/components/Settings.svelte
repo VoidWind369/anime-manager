@@ -1,5 +1,7 @@
 <script lang="ts">
   import { invoke } from "../utils/tauri-adapter";
+  import { _ } from "svelte-i18n";
+  import { setLanguage, getLanguage } from "../i18n/index";
 
   export let initialPath: string;
   export let onSave: (path: string) => void;
@@ -27,6 +29,7 @@
 
   let libraryPath = initialPath;
   let isSaving = false;
+  let currentLanguage = getLanguage();
 
   $: bgUrlValue = customBgUrl;
 
@@ -35,43 +38,60 @@
   let modalMessage = "";
 
   const schemes = [
-    { id: "sakura", name: "樱粉", light: "#ff5595", dark: "#ff6ba0" },
-    { id: "indigo", name: "靛蓝", light: "#6366f1", dark: "#818cf8" },
-    { id: "forest", name: "森绿", light: "#10b981", dark: "#34d399" },
-    { id: "amber", name: "琥珀", light: "#f59e0b", dark: "#fbbf24" },
-    { id: "violet", name: "紫罗兰", light: "#8b5cf6", dark: "#a78bfa" },
-    { id: "teal", name: "青碧", light: "#14b8a6", dark: "#2dd4bf" },
-    { id: "rose", name: "玫瑰", light: "#f43f5e", dark: "#fda4af" },
-    { id: "ocean", name: "深海", light: "#0c87e8", dark: "#36a8f2" },
-    { id: "sunset", name: "落日", light: "#f97316", dark: "#fdba74" },
-    { id: "ink", name: "墨韵", light: "#64748b", dark: "#94a3b8" },
-    { id: "primrose", name: "樱草", light: "#eab308", dark: "#fde047" },
-    { id: "coral", name: "珊瑚", light: "#ff5a3c", dark: "#ffa88c" },
+    { id: "sakura", nameKey: "schemes.sakura", light: "#ff5595", dark: "#ff6ba0" },
+    { id: "indigo", nameKey: "schemes.indigo", light: "#6366f1", dark: "#818cf8" },
+    { id: "forest", nameKey: "schemes.forest", light: "#10b981", dark: "#34d399" },
+    { id: "amber", nameKey: "schemes.amber", light: "#f59e0b", dark: "#fbbf24" },
+    { id: "violet", nameKey: "schemes.violet", light: "#8b5cf6", dark: "#a78bfa" },
+    { id: "teal", nameKey: "schemes.cyan", light: "#14b8a6", dark: "#2dd4bf" },
+    { id: "rose", nameKey: "schemes.rose", light: "#f43f5e", dark: "#fda4af" },
+    { id: "ocean", nameKey: "schemes.deepsea", light: "#0c87e8", dark: "#36a8f2" },
+    { id: "sunset", nameKey: "schemes.sunset", light: "#f97316", dark: "#fdba74" },
+    { id: "ink", nameKey: "schemes.ink", light: "#64748b", dark: "#94a3b8" },
+    { id: "primrose", nameKey: "schemes.primrose", light: "#eab308", dark: "#fde047" },
+    { id: "coral", nameKey: "schemes.coral", light: "#ff5a3c", dark: "#ffa88c" },
   ];
 
   const bgOptions = [
-    { id: "pure", name: "纯净", desc: "纯色背景" },
-    { id: "gradient", name: "渐变", desc: "光晕渐变" },
-    { id: "custom", name: "自定义", desc: "图片背景" },
+    { id: "pure", nameKey: "bgOptions.clean", descKey: "bgOptions.cleanDesc" },
+    { id: "gradient", nameKey: "bgOptions.gradient", descKey: "bgOptions.gradientDesc" },
+    { id: "custom", nameKey: "bgOptions.custom", descKey: "bgOptions.customDesc" },
   ];
 
   const glassOptions = [
-    { id: "solid", name: "实色", desc: "无模糊" },
-    { id: "translucent", name: "半透", desc: "轻微毛玻璃" },
-    { id: "glass", name: "玻璃态", desc: "强毛玻璃" },
+    { id: "solid", nameKey: "glassOptions.solid", descKey: "glassOptions.solidDesc" },
+    { id: "translucent", nameKey: "glassOptions.translucent", descKey: "glassOptions.translucentDesc" },
+    { id: "glass", nameKey: "glassOptions.glass", descKey: "glassOptions.glassDesc" },
   ];
 
   const shadowOptions = [
-    { id: "flat", name: "平面", desc: "无阴影" },
-    { id: "standard", name: "标准", desc: "柔和阴影" },
-    { id: "float", name: "浮浮", desc: "强阴影悬浮" },
+    { id: "flat", nameKey: "shadowOptions.flat", descKey: "shadowOptions.flatDesc" },
+    { id: "standard", nameKey: "shadowOptions.standard", descKey: "shadowOptions.standardDesc" },
+    { id: "float", nameKey: "shadowOptions.float", descKey: "shadowOptions.floatDesc" },
   ];
 
   const motionOptions = [
-    { id: "minimal", name: "极简", desc: "0.1s 无位移" },
-    { id: "standard", name: "标准", desc: "0.3s 轻位移" },
-    { id: "rich", name: "丰富", desc: "0.5s 弹性动画" },
+    { id: "minimal", nameKey: "motionOptions.minimal", descKey: "motionOptions.minimalDesc" },
+    { id: "standard", nameKey: "motionOptions.standard", descKey: "motionOptions.standardDesc" },
+    { id: "rich", nameKey: "motionOptions.rich", descKey: "motionOptions.richDesc" },
   ];
+
+  const languages = [
+    { id: "zh-CN", name: "简体中文" },
+    { id: "zh-TW", name: "繁體中文" },
+    { id: "en", name: "English" },
+    { id: "ja", name: "日本語" },
+    { id: "fr", name: "Français" },
+    { id: "ru", name: "Русский" },
+    { id: "es", name: "Español" },
+    { id: "ar", name: "العربية" },
+    { id: "pt", name: "Português" },
+  ];
+
+  function changeLanguage(lang: string) {
+    currentLanguage = lang;
+    setLanguage(lang);
+  }
 
   function showMessage(title: string, message: string) {
     modalTitle = title;
@@ -98,7 +118,7 @@
       const selected = await open({
         multiple: false,
         directory: false,
-        filters: [{ name: "图片", extensions: ["png", "jpg", "jpeg", "gif", "webp", "bmp"] }],
+        filters: [{ name: $_('app.image'), extensions: ["png", "jpg", "jpeg", "gif", "webp", "bmp"] }],
       });
       if (selected && typeof selected === "string") {
         const uint8 = await readFile(selected);
@@ -176,7 +196,7 @@
   async function saveSettings() {
     isSaving = true;
     try { await invoke("set_library_path", { path: libraryPath }); onSave(libraryPath); }
-    catch (e) { showMessage("保存失败", `${e}`); }
+    catch (e) { showMessage($_('settings.saveFailed'), `${e}`); }
     finally { isSaving = false; }
   }
 </script>
@@ -184,16 +204,32 @@
 <div class="settings-wrap">
   <div class="settings-card">
     <div class="setting-row">
-      <label>动漫库目录</label>
+      <label>{$_('settings.libraryPath')}</label>
       <div class="path-row">
-        <input type="text" bind:value={libraryPath} placeholder="选择目录..." />
-        <button class="ghost" on:click={browseDirectory}>浏览</button>
+        <input type="text" bind:value={libraryPath} placeholder={$_('settings.pathPlaceholder')} />
+        <button class="ghost" on:click={browseDirectory}>{$_('app.browse')}</button>
       </div>
-      <p class="hint">程序将扫描此目录下的所有动漫文件夹</p>
+      <p class="hint">{$_('settings.pathHint')}</p>
     </div>
 
     <div class="setting-row">
-      <label>外观主题</label>
+      <label>{$_('settings.language')}</label>
+      <div class="scheme-grid">
+        {#each languages as lang}
+          <button
+            class="scheme-card"
+            class:active={currentLanguage === lang.id}
+            on:click={() => changeLanguage(lang.id)}
+          >
+            <span class="scheme-name">{lang.name}</span>
+          </button>
+        {/each}
+      </div>
+      <p class="hint">{$_('settings.languageHint')}</p>
+    </div>
+
+    <div class="setting-row">
+      <label>{$_('settings.theme')}</label>
       <div class="theme-toggle-row">
         <button
           class="theme-option"
@@ -201,7 +237,7 @@
           on:click={() => isDark && onToggleTheme()}
         >
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-          <span>亮色</span>
+          <span>{$_('settings.light')}</span>
         </button>
         <button
           class="theme-option"
@@ -209,14 +245,14 @@
           on:click={() => !isDark && onToggleTheme()}
         >
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          <span>暗色</span>
+          <span>{$_('settings.dark')}</span>
         </button>
       </div>
-      <p class="hint">切换亮色 / 暗色模式，设置自动保存</p>
+      <p class="hint">{$_('settings.themeHint')}</p>
     </div>
 
     <div class="setting-row">
-      <label>配色方案</label>
+      <label>{$_('settings.colorScheme')}</label>
       <div class="scheme-grid">
         {#each schemes as s}
           <button
@@ -227,17 +263,17 @@
             <div class="scheme-preview" style="background: linear-gradient(135deg, {s.light}, {s.dark})">
               <div class="scheme-dot" style="background: {s.dark}"></div>
             </div>
-            <span class="scheme-name">{s.name}</span>
+            <span class="scheme-name">{$_(s.nameKey)}</span>
           </button>
         {/each}
       </div>
-      <p class="hint">选择主题配色，设置自动保存</p>
+      <p class="hint">{$_('settings.colorSchemeHint')}</p>
     </div>
 
     <div class="setting-row">
-      <label>圆角风格</label>
+      <label>{$_('settings.borderRadius')}</label>
       <div class="slider-row">
-        <span class="slider-label">圆角大小</span>
+        <span class="slider-label">{$_('settings.radiusSize')}</span>
         <input
           type="range"
           min="0"
@@ -248,11 +284,11 @@
         />
         <span class="slider-value">{Math.round(radiusScale * 100)}%</span>
       </div>
-      <p class="hint">拖动滑块调整圆角大小，0% 为直角，100% 为大圆角</p>
+      <p class="hint">{$_('settings.radiusHint')}</p>
     </div>
 
     <div class="setting-row">
-      <label>背景图片</label>
+      <label>{$_('settings.background')}</label>
       <div class="option-row">
         {#each bgOptions as o}
           <button
@@ -261,8 +297,8 @@
             on:click={() => onChangeBgStyle(o.id, bgUrlValue)}
           >
             <div class="option-icon bg-{o.id}"></div>
-            <span class="option-name">{o.name}</span>
-            <span class="option-desc">{o.desc}</span>
+            <span class="option-name">{$_(o.nameKey)}</span>
+            <span class="option-desc">{$_(o.descKey)}</span>
           </button>
         {/each}
       </div>
@@ -270,17 +306,17 @@
         <div class="bg-picker-row">
           <button class="bg-picker-btn" on:click={pickBgImage}>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            选择图片
+            {$_('app.selectImage')}
           </button>
           {#if bgUrlValue}
             <div class="bg-preview" style="background-image: url('{bgUrlValue}')"></div>
-            <button class="ghost bg-clear-btn" on:click={() => onChangeBgStyle("pure")}>清除</button>
+            <button class="ghost bg-clear-btn" on:click={() => onChangeBgStyle("pure")}>{$_('app.clear')}</button>
           {/if}
         </div>
-        <p class="hint">点击按钮选择本地图片作为背景</p>
+        <p class="hint">{$_('settings.bgHint')}</p>
         {#if bgUrlValue}
           <div class="slider-row">
-            <span class="slider-label">背景透明度</span>
+            <span class="slider-label">{$_('settings.bgOpacity')}</span>
             <input
               type="range"
               min="0.1"
@@ -296,7 +332,7 @@
     </div>
 
     <div class="setting-row">
-      <label>透明度 / 毛玻璃</label>
+      <label>{$_('settings.glassMode')}</label>
       <div class="option-row">
         {#each glassOptions as o}
           <button
@@ -305,13 +341,13 @@
             on:click={() => onChangeGlassMode(o.id)}
           >
             <div class="option-icon glass-{o.id}"></div>
-            <span class="option-name">{o.name}</span>
-            <span class="option-desc">{o.desc}</span>
+            <span class="option-name">{$_(o.nameKey)}</span>
+            <span class="option-desc">{$_(o.descKey)}</span>
           </button>
         {/each}
       </div>
       <div class="slider-row">
-        <span class="slider-label">卡片透明度</span>
+        <span class="slider-label">{$_('settings.cardOpacity')}</span>
         <input
           type="range"
           min="0.2"
@@ -322,9 +358,9 @@
         />
         <span class="slider-value">{Math.round(cardOpacity * 100)}%</span>
       </div>
-      <p class="hint">拖动滑块调整卡片不透明度，范围 20% ~ 100%</p>
+      <p class="hint">{$_('settings.cardOpacityHint')}</p>
       <div class="slider-row">
-        <span class="slider-label">标题栏透明度</span>
+        <span class="slider-label">{$_('settings.titlebarOpacity')}</span>
         <input
           type="range"
           min="0"
@@ -335,11 +371,11 @@
         />
         <span class="slider-value">{Math.round(titlebarOpacity * 100)}%</span>
       </div>
-      <p class="hint">拖动滑块调整标题栏透明度，范围 0% ~ 100%</p>
+      <p class="hint">{$_('settings.titlebarOpacityHint')}</p>
     </div>
 
     <div class="setting-row">
-      <label>卡片阴影</label>
+      <label>{$_('settings.cardShadow')}</label>
       <div class="option-row">
         {#each shadowOptions as o}
           <button
@@ -348,15 +384,15 @@
             on:click={() => onChangeShadowStyle(o.id)}
           >
             <div class="option-icon shadow-{o.id}"></div>
-            <span class="option-name">{o.name}</span>
-            <span class="option-desc">{o.desc}</span>
+            <span class="option-name">{$_(o.nameKey)}</span>
+            <span class="option-desc">{$_(o.descKey)}</span>
           </button>
         {/each}
       </div>
     </div>
 
     <div class="setting-row">
-      <label>动画强度</label>
+      <label>{$_('settings.animation')}</label>
       <div class="option-row">
         {#each motionOptions as o}
           <button
@@ -365,15 +401,15 @@
             on:click={() => onChangeMotionLevel(o.id)}
           >
             <div class="option-icon motion-{o.id}"></div>
-            <span class="option-name">{o.name}</span>
-            <span class="option-desc">{o.desc}</span>
+            <span class="option-name">{$_(o.nameKey)}</span>
+            <span class="option-desc">{$_(o.descKey)}</span>
           </button>
         {/each}
       </div>
     </div>
 
     <div class="info-section">
-      <h3>支持格式</h3>
+      <h3>{$_('settings.supportedFormats')}</h3>
       <div class="fmt-list">
         {#each ["mp4", "mkv", "avi", "mov", "wmv", "flv", "webm", "rmvb", "m4v"] as f}
           <span class="fmt">{f}</span>
@@ -382,16 +418,16 @@
     </div>
 
     <div class="info-section">
-      <h3>命名规则</h3>
+      <h3>{$_('settings.namingRule')}</h3>
       <div class="rule-list">
-        <span class="rule">[中文名] 第X季 [字幕组]</span>
-        <span class="rule">[中文名] [剧场版/OVA] [字幕组]</span>
+        <span class="rule">{$_('settings.rule1')}</span>
+        <span class="rule">{$_('settings.rule2')}</span>
       </div>
     </div>
 
     <div class="save-row">
       <button on:click={saveSettings} disabled={isSaving}>
-        {isSaving ? "保存中..." : "保存设置"}
+        {isSaving ? $_('app.saving') : $_('app.save')}
       </button>
     </div>
   </div>
@@ -410,7 +446,7 @@
         <p>{modalMessage}</p>
       </div>
       <div class="modal-footer">
-        <button class="modal-confirm" on:click={closeModal}>确定</button>
+        <button class="modal-confirm" on:click={closeModal}>{$_('app.ok')}</button>
       </div>
     </div>
   </div>
