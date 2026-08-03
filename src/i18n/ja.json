@@ -159,6 +159,10 @@
     "confirmUninstall": "アンインストール確認",
     "confirmUninstallMsg": "{name} をアンインストールしますか？",
     "uninstallSuccess": "アンインストール完了",
-    "uninstallFailed": "アンインストール失敗"
+    "uninstallFailed": "アンインストール失敗",
+    "openDir": "ディレクトリを開く",
+    "settings": "設定",
+    "settingsTitle": "{name} 設定",
+    "settingsSaved": "設定を保存しました"
   }
 }

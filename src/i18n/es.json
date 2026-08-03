@@ -160,6 +160,10 @@
     "confirmUninstall": "Confirmar desinstalación",
     "confirmUninstallMsg": "¿Estás seguro de que quieres desinstalar {name}?",
     "uninstallSuccess": "Desinstalado",
-    "uninstallFailed": "Error al desinstalar"
+    "uninstallFailed": "Error al desinstalar",
+    "openDir": "Abrir directorio",
+    "settings": "Ajustes",
+    "settingsTitle": "Ajustes de {name}",
+    "settingsSaved": "Ajustes guardados"
   }
 }

@@ -160,6 +160,10 @@
     "confirmUninstall": "Confirmer la désinstallation",
     "confirmUninstallMsg": "Voulez-vous vraiment désinstaller {name} ?",
     "uninstallSuccess": "Désinstallé",
-    "uninstallFailed": "Échec de la désinstallation"
+    "uninstallFailed": "Échec de la désinstallation",
+    "openDir": "Ouvrir le dossier",
+    "settings": "Paramètres",
+    "settingsTitle": "Paramètres de {name}",
+    "settingsSaved": "Paramètres enregistrés"
   }
 }

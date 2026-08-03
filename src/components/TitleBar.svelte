@@ -338,14 +338,16 @@
     position: absolute;
     top: 100%;
     right: 0;
-    margin-top: 4px;
-    min-width: 160px;
-    background: var(--surface);
+    margin-top: 6px;
+    min-width: 200px;
+    background: var(--card-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg);
     z-index: 100;
-    padding: 4px;
+    padding: 4px 6px;
     animation: dropdownIn 0.15s ease;
   }
 
@@ -357,9 +359,10 @@
   .plugin-dropdown-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     width: 100%;
-    padding: 8px 12px;
+    padding: 10px 14px;
+    margin: 6px 0;
     border: none;
     background: transparent;
     border-radius: var(--radius-sm);

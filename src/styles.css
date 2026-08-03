@@ -790,6 +790,64 @@ button.ghost:hover:not(:disabled) {
   box-shadow: none;
 }
 
+/* ---- tabs 扁平选项卡 ---- */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-flat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+  box-shadow: none;
+  transform: none;
+}
+
+.tab-flat:hover {
+  color: var(--text-primary);
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.tab-flat:active {
+  transform: none;
+}
+
+.tab-flat.active {
+  color: var(--accent-600);
+  border-bottom-color: var(--accent-500);
+  background: transparent;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .tab-flat {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .tab-flat:hover {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .tab-flat.active {
+  color: var(--accent-400);
+  border-bottom-color: var(--accent-400);
+}
+
 /* ---- input ---- */
 input {
   background: var(--surface);

@@ -160,6 +160,10 @@
     "confirmUninstall": "تأكيد إلغاء التثبيت",
     "confirmUninstallMsg": "هل أنت متأكد أنك تريد إلغاء تثبيت {name}؟",
     "uninstallSuccess": "تم إلغاء التثبيت",
-    "uninstallFailed": "فشل إلغاء التثبيت"
+    "uninstallFailed": "فشل إلغاء التثبيت",
+    "openDir": "فتح المجلد",
+    "settings": "إعدادات",
+    "settingsTitle": "إعدادات {name}",
+    "settingsSaved": "تم حفظ الإعدادات"
   }
 }

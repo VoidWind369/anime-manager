@@ -44,6 +44,7 @@
   let seasonGroups: SeasonGroup[] = [];
   let activeSeason: number = 1;
   let activeVersionIndex: number = 0;
+  let showVersionDropdown: boolean = false;
 
   $: totalEpisodesAll = seasonGroups.reduce((s, g) => s + g.totalEpisodes, 0);
   $: watchedEpisodesAll = seasonGroups.reduce((s, g) => s + g.watchedEpisodes, 0);
@@ -126,6 +127,14 @@
     await loadOriginalName();
     await loadCover();
     activeSeason = anime.season;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (showVersionDropdown && !(e.target as HTMLElement).closest('.version-select-wrap')) {
+        showVersionDropdown = false;
+      }
+    };
+    document.addEventListener('click', handleClickOutside, true);
+    return () => document.removeEventListener('click', handleClickOutside, true);
   });
 
   $: {
@@ -269,49 +278,70 @@
       {/if}
 
       {#if activeGroup}
-        <!-- 版本选项卡 -->
-        {#if activeGroup.versions.length > 1}
-          <div class="version-tabs">
-            {#each activeGroup.versions as vg, i (vg.anime.id)}
-              <button
-                class="version-tab"
-                class:active={i === activeVersionIndex}
-                on:click={() => activeVersionIndex = i}
-              >
-                {#if vg.anime.subtitle}
-                  <span class="vtab-name">{vg.anime.subtitle}</span>
-                {/if}
-                {#if vg.anime.subtitle_group}
-                  <span class="vtab-group">{vg.anime.subtitle_group}</span>
-                {:else}
-                  <span class="vtab-group unknown">{$_('detail.unknownGroup')}</span>
-                {/if}
-                <span class="vtab-count">{vg.episodes.length}</span>
-              </button>
-            {/each}
-          </div>
-        {/if}
-
         {#if activeVersion}
           <div class="version-group">
             <div class="version-header">
-              <div class="version-info">
-                {#if activeVersion.anime.subtitle}
-                  <span class="version-name">{activeVersion.anime.subtitle}</span>
-                {/if}
-                {#if activeVersion.anime.subtitle_group}
-                  {#each activeVersion.anime.subtitle_group.split('&') as g}
-                    <span class="version-sub-tag">{g.trim()}</span>
-                  {/each}
+              <div class="version-header-row">
+                {#if activeGroup.versions.length > 1}
+                  <div class="version-select-wrap">
+                    <button class="version-select-trigger" on:click|stopPropagation={() => showVersionDropdown = !showVersionDropdown}>
+                      {#if activeVersion.anime.subtitle}
+                        <span class="version-name">{activeVersion.anime.subtitle}</span>
+                      {/if}
+                      {#if activeVersion.anime.subtitle_group}
+                        {#each activeVersion.anime.subtitle_group.split('&') as g}
+                          <span class="version-sub-tag">{g.trim()}</span>
+                        {/each}
+                      {:else}
+                        <span class="version-sub-tag unknown">{$_('detail.unknownGroup')}</span>
+                      {/if}
+                      <span class="version-ep-count">{activeVersion.episodes.length} {$_('library.episodes')}</span>
+                      <svg class="version-select-arrow" class:open={showVersionDropdown} viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    {#if showVersionDropdown}
+                      <div class="version-select-dropdown">
+                        {#each activeGroup.versions as vg, i (vg.anime.id)}
+                          <button
+                            class="version-select-option"
+                            class:active={i === activeVersionIndex}
+                            on:click={() => { activeVersionIndex = i; showVersionDropdown = false; }}
+                          >
+                            {#if vg.anime.subtitle}
+                              <span class="version-name">{vg.anime.subtitle}</span>
+                            {/if}
+                            {#if vg.anime.subtitle_group}
+                              {#each vg.anime.subtitle_group.split('&') as g}
+                                <span class="version-sub-tag">{g.trim()}</span>
+                              {/each}
+                            {:else}
+                              <span class="version-sub-tag unknown">{$_('detail.unknownGroup')}</span>
+                            {/if}
+                            <span class="version-ep-count">{vg.episodes.length} {$_('library.episodes')}</span>
+                          </button>
+                        {/each}
+                      </div>
+                    {/if}
+                  </div>
                 {:else}
-                  <span class="version-sub-tag unknown">{$_('detail.unknownGroup')}</span>
+                  <div class="version-info">
+                    {#if activeVersion.anime.subtitle}
+                      <span class="version-name">{activeVersion.anime.subtitle}</span>
+                    {/if}
+                    {#if activeVersion.anime.subtitle_group}
+                      {#each activeVersion.anime.subtitle_group.split('&') as g}
+                        <span class="version-sub-tag">{g.trim()}</span>
+                      {/each}
+                    {:else}
+                      <span class="version-sub-tag unknown">{$_('detail.unknownGroup')}</span>
+                    {/if}
+                    <span class="version-ep-count">{activeVersion.episodes.length} {$_('library.episodes')}</span>
+                  </div>
                 {/if}
-                <span class="version-ep-count">{activeVersion.episodes.length} {$_('library.episodes')}</span>
+                <button class="version-dir-btn" on:click={() => openDirectory(activeVersion.anime.directory_path)} title={$_('detail.openDirectory')}>
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                  {$_('detail.directory')}
+                </button>
               </div>
-              <button class="version-dir-btn" on:click={() => openDirectory(activeVersion.anime.directory_path)} title={$_('detail.openDirectory')}>
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                {$_('detail.directory')}
-              </button>
             </div>
 
             <div class="ep-list">
@@ -559,80 +589,6 @@
     opacity: 1;
   }
 
-  /* 版本选项卡 */
-  .version-tabs {
-    display: flex;
-    gap: var(--space-2);
-    margin-bottom: var(--space-4);
-  }
-
-  .version-tab {
-    flex: 0 0 auto;
-    padding: 6px 14px;
-    border-radius: var(--radius-sm);
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-  }
-
-  .version-tab:hover {
-    color: var(--text-primary);
-    background: var(--surface-dim);
-  }
-
-  .version-tab.active {
-    background: var(--accent-50);
-    color: var(--accent-600);
-    font-weight: 600;
-    border: 1px solid var(--accent-200);
-    padding: 5px 13px;
-  }
-
-  .vtab-name {
-    color: var(--text-primary);
-    font-weight: 600;
-  }
-
-  .version-tab.active .vtab-name {
-    color: var(--accent-700);
-  }
-
-  .vtab-group {
-    color: var(--accent-500);
-    font-weight: 500;
-  }
-
-  .version-tab:not(.active) .vtab-group {
-    color: var(--text-tertiary);
-    font-weight: 400;
-  }
-
-  .vtab-group.unknown {
-    color: var(--text-tertiary);
-  }
-
-  .vtab-count {
-    font-size: 0.68rem;
-    font-weight: 500;
-    padding: 1px 6px;
-    background: var(--border);
-    color: var(--text-tertiary);
-    border-radius: var(--radius-pill);
-  }
-
-  .version-tab.active .vtab-count {
-    background: var(--accent-200);
-    color: var(--accent-700);
-  }
-
   .version-group {
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -641,12 +597,109 @@
   }
 
   .version-header {
+    padding: 0;
+    background: var(--card-bg-dim);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .version-header-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: var(--space-3) var(--space-5);
-    background: var(--card-bg-dim);
-    border-bottom: 1px solid var(--border);
+  }
+
+  .version-select-wrap {
+    position: relative;
+  }
+
+  .version-select-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+    color: inherit;
+    font: inherit;
+    transform: none !important;
+  }
+
+  .version-select-trigger:hover {
+    color: inherit;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  .version-select-trigger:active {
+    transform: none !important;
+  }
+
+  .version-select-arrow {
+    color: var(--text-tertiary);
+    transition: transform 0.2s ease;
+    margin-left: 2px;
+  }
+
+  .version-select-arrow.open {
+    transform: rotate(180deg);
+  }
+
+  .version-select-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 280px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 50;
+    padding: 4px 6px;
+    animation: dropdownIn 0.15s ease;
+  }
+
+  @keyframes dropdownIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .version-select-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: 10px 14px;
+    margin: 6px 0;
+    border: none !important;
+    border-radius: var(--radius-sm);
+    background: transparent !important;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    white-space: nowrap;
+    color: var(--text-primary) !important;
+    font: inherit;
+    text-align: left;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  .version-select-option:hover {
+    background: rgba(var(--accent-rgb), 0.08) !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  .version-select-option.active {
+    background: rgba(var(--accent-rgb), 0.12) !important;
+    box-shadow: none !important;
+    transform: none !important;
   }
 
   .version-info {
@@ -857,50 +910,6 @@
     color: var(--text-tertiary);
   }
 
-  /* 版本选项卡暗色 */
-
-  :global([data-theme="dark"]) .version-tab {
-    color: var(--text-secondary);
-  }
-
-  :global([data-theme="dark"]) .version-tab:hover {
-    background: var(--surface-dim);
-    color: var(--text-primary);
-  }
-
-  :global([data-theme="dark"]) .version-tab.active {
-    background: rgba(var(--accent-rgb), 0.15);
-    color: var(--accent-300);
-    border-color: rgba(var(--accent-rgb), 0.3);
-  }
-
-  :global([data-theme="dark"]) .version-tab.active .vtab-name {
-    color: var(--accent-300);
-  }
-
-  :global([data-theme="dark"]) .version-tab.active .vtab-group {
-    color: var(--accent-400);
-  }
-
-  :global([data-theme="dark"]) .vtab-group {
-    color: var(--accent-400);
-  }
-
-  :global([data-theme="dark"]) .version-tab:not(.active) .vtab-group {
-    color: var(--text-tertiary);
-  }
-
-  :global([data-theme="dark"]) .vtab-count {
-    background: var(--border);
-    color: var(--text-tertiary);
-  }
-
-  :global([data-theme="dark"]) .version-tab.active .vtab-count {
-    background: rgba(var(--accent-rgb), 0.25);
-    color: var(--accent-300);
-  }
-
-  /* 版本组暗色 */
   :global([data-theme="dark"]) .version-group {
     background: var(--card-bg);
     border-color: var(--border);
@@ -943,6 +952,23 @@
     background: rgba(var(--accent-rgb), 0.15);
     border-color: rgba(var(--accent-rgb), 0.35);
     box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.15);
+  }
+
+  :global([data-theme="dark"]) .version-select-dropdown {
+    background: var(--surface);
+    border-color: var(--border);
+  }
+
+  :global([data-theme="dark"]) .version-select-option:hover {
+    background: rgba(var(--accent-rgb), 0.15);
+  }
+
+  :global([data-theme="dark"]) .version-select-option.active {
+    background: rgba(var(--accent-rgb), 0.2);
+  }
+
+  :global([data-theme="dark"]) .version-select-arrow {
+    color: var(--text-secondary);
   }
 
   /* 剧集列表暗色 */

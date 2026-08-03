@@ -46,6 +46,13 @@
 
   refreshPlugins();
 
+  async function openPluginsDir() {
+    try {
+      const dir = await invoke<string>("get_plugins_dir");
+      await invoke("open_directory", { path: dir });
+    } catch (_) {}
+  }
+
   function handlePluginToggle(p: PluginState) {
     togglePlugin(p.id);
     refreshPlugins();
@@ -268,20 +275,20 @@
 </script>
 
 <div class="settings-wrap">
-  <div class="settings-tabs">
-    <div class="tab-item" class:active={activeTab === "general"} on:click={() => activeTab = "general"} on:keydown={() => {}}>
+  <div class="tabs">
+    <div class="tab-flat" class:active={activeTab === "general"} on:click={() => activeTab = "general"} on:keydown={() => {}}>
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span>{$_('settings.tabGeneral')}</span>
     </div>
-    <div class="tab-item" class:active={activeTab === "appearance"} on:click={() => activeTab = "appearance"} on:keydown={() => {}}>
+    <div class="tab-flat" class:active={activeTab === "appearance"} on:click={() => activeTab = "appearance"} on:keydown={() => {}}>
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
       <span>{$_('settings.tabAppearance')}</span>
     </div>
-    <div class="tab-item" class:active={activeTab === "about"} on:click={() => activeTab = "about"} on:keydown={() => {}}>
+    <div class="tab-flat" class:active={activeTab === "about"} on:click={() => activeTab = "about"} on:keydown={() => {}}>
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
       <span>{$_('settings.tabAbout')}</span>
     </div>
-    <div class="tab-item" class:active={activeTab === "plugins"} on:click={() => activeTab = "plugins"} on:keydown={() => {}}>
+    <div class="tab-flat" class:active={activeTab === "plugins"} on:click={() => activeTab = "plugins"} on:keydown={() => {}}>
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
       <span>{$_('settings.tabPlugins')}</span>
     </div>
@@ -511,7 +518,13 @@
         </div>
       </div>
     {:else if activeTab === "plugins"}
-      <p class="hint" style="margin-bottom: var(--space-4);">{$_('plugin.hint')}</p>
+      <div class="plugin-hint-row">
+        <p class="hint">{$_('plugin.hint')}</p>
+        <button class="open-dir-btn" on:click={openPluginsDir}>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          {$_('plugin.openDir')}
+        </button>
+      </div>
       {#if pluginList.length === 0}
         <div class="plugin-empty">
           <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -655,40 +668,12 @@
 <style>
   .settings-wrap { max-width: 600px; margin: 0 auto; }
 
-  .settings-tabs {
-    display: flex;
-    border-bottom: 1px solid var(--border);
+  .settings-wrap :global(.tabs) {
     margin-bottom: var(--space-6);
   }
 
-  .tab-item {
+  .settings-wrap :global(.tab-flat) {
     flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
-    padding: var(--space-3) var(--space-4);
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: var(--text-tertiary);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    transition: color 0.2s ease, border-color 0.2s ease;
-  }
-
-  .tab-item:hover {
-    color: var(--text-primary);
-  }
-
-  .tab-item.active {
-    color: var(--accent-600);
-    border-bottom-color: var(--accent-500);
-  }
-
-  :global([data-theme="dark"]) .tab-item.active {
-    color: var(--accent-400);
-    border-bottom-color: var(--accent-400);
   }
 
   .settings-card {
@@ -1150,6 +1135,38 @@
   }
 
   /* 插件列表 */
+  .plugin-hint-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  .plugin-hint-row .hint {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 0;
+  }
+  .open-dir-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+  .open-dir-btn:hover {
+    border-color: var(--accent-400);
+    color: var(--accent-600);
+  }
+
   .plugin-empty {
     text-align: center;
     padding: var(--space-8) 0;

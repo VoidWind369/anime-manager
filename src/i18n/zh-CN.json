@@ -163,6 +163,7 @@
     "uninstallSuccess": "卸载成功",
     "uninstallFailed": "卸载失败",
     "settingsTitle": "{name} 设置",
-    "settingsSaved": "设置已保存"
+    "settingsSaved": "设置已保存",
+    "openDir": "打开目录"
   }
 }

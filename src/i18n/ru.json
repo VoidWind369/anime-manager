@@ -160,6 +160,10 @@
     "confirmUninstall": "Подтвердить удаление",
     "confirmUninstallMsg": "Вы уверены, что хотите удалить {name}?",
     "uninstallSuccess": "Удалено",
-    "uninstallFailed": "Ошибка удаления"
+    "uninstallFailed": "Ошибка удаления",
+    "openDir": "Открыть папку",
+    "settings": "Настройки",
+    "settingsTitle": "Настройки {name}",
+    "settingsSaved": "Настройки сохранены"
   }
 }

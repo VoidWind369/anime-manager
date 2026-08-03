@@ -160,6 +160,10 @@
     "confirmUninstall": "確認解除安裝",
     "confirmUninstallMsg": "確定要解除安裝插件 {name} 嗎？",
     "uninstallSuccess": "解除安裝成功",
-    "uninstallFailed": "解除安裝失敗"
+    "uninstallFailed": "解除安裝失敗",
+    "openDir": "開啟目錄",
+    "settings": "設定",
+    "settingsTitle": "{name} 設定",
+    "settingsSaved": "設定已儲存"
   }
 }

@@ -160,6 +160,10 @@
     "confirmUninstall": "Confirm Uninstall",
     "confirmUninstallMsg": "Are you sure you want to uninstall {name}?",
     "uninstallSuccess": "Uninstalled",
-    "uninstallFailed": "Uninstall failed"
+    "uninstallFailed": "Uninstall failed",
+    "openDir": "Open Directory",
+    "settings": "Settings",
+    "settingsTitle": "{name} Settings",
+    "settingsSaved": "Settings saved"
   }
 }
