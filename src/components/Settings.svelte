@@ -26,6 +26,7 @@
   export let onChangeCardOpacity: (v: number) => void;
   export let titlebarOpacity: number = 0.8;
   export let onChangeTitlebarOpacity: (v: number) => void;
+  export let onOpenPlugins: () => void = () => {};
 
   let libraryPath = initialPath;
   let isSaving = false;
@@ -426,6 +427,9 @@
     </div>
 
     <div class="save-row">
+      <button class="plugins-btn" on:click={onOpenPlugins}>
+        {$_('settings.plugins')}
+      </button>
       <button on:click={saveSettings} disabled={isSaving}>
         {isSaving ? $_('app.saving') : $_('app.save')}
       </button>
@@ -507,7 +511,8 @@
     border: 1px solid var(--border);
   }
 
-  .save-row { display: flex; justify-content: flex-end; }
+  .save-row { display: flex; justify-content: flex-end; gap: 12px; }
+  .plugins-btn { background: var(--surface) !important; border: 1px solid var(--accent-200) !important; }
 
   /* 主题切换 */
   .theme-toggle-row {

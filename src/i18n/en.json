@@ -85,7 +85,8 @@
     "rule2": "[Chinese Name] [Movie/OVA] [Group]",
     "saveFailed": "Save failed",
     "language": "Language",
-    "languageHint": "Choose display language, settings auto-saved"
+    "languageHint": "Choose display language, settings auto-saved",
+    "plugins": "Plugins"
   },
   "schemes": {
     "sakura": "Sakura",
@@ -143,5 +144,18 @@
     "es": "Español",
     "ar": "العربية",
     "pt": "Português"
+  },
+  "plugin": {
+    "title": "Plugin Management",
+    "hint": "Place plugin folders into %APPDATA%/com.animemanager.app/plugins/ and restart the app to load them",
+    "noPlugins": "No plugins",
+    "noPluginsHint": "Place plugin folders into the directory above",
+    "enable": "Enable",
+    "disable": "Disable",
+    "uninstall": "Uninstall",
+    "confirmUninstall": "Confirm Uninstall",
+    "confirmUninstallMsg": "Are you sure you want to uninstall {name}?",
+    "uninstallSuccess": "Uninstalled",
+    "uninstallFailed": "Uninstall failed"
   }
 }

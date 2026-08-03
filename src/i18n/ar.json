@@ -85,7 +85,8 @@
     "rule2": "[الاسم الصيني] [فيلم/OVA] [المجموعة]",
     "saveFailed": "فشل الحفظ",
     "language": "اللغة",
-    "languageHint": "اختر لغة العرض، يتم حفظ الإعدادات تلقائياً"
+    "languageHint": "اختر لغة العرض، يتم حفظ الإعدادات تلقائياً",
+    "plugins": "إدارة الإضافات"
   },
   "schemes": {
     "sakura": "ساكورا",
@@ -143,5 +144,18 @@
     "es": "Español",
     "ar": "العربية",
     "pt": "Português"
+  },
+  "plugin": {
+    "title": "إدارة الإضافات",
+    "hint": "ضع مجلدات الإضافات في %APPDATA%/com.animemanager.app/plugins/ وأعد تشغيل التطبيق",
+    "noPlugins": "لا توجد إضافات",
+    "noPluginsHint": "ضع مجلدات الإضافات في المجلد أعلاه",
+    "enable": "تفعيل",
+    "disable": "تعطيل",
+    "uninstall": "إلغاء التثبيت",
+    "confirmUninstall": "تأكيد إلغاء التثبيت",
+    "confirmUninstallMsg": "هل أنت متأكد أنك تريد إلغاء تثبيت {name}؟",
+    "uninstallSuccess": "تم إلغاء التثبيت",
+    "uninstallFailed": "فشل إلغاء التثبيت"
   }
 }

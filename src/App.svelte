@@ -3,13 +3,15 @@
   import { invoke } from "./utils/tauri-adapter";
   import { _ } from "svelte-i18n";
   import "./i18n/index";
+  import { loadAllPlugins, panels, toolbarButtons, resolveModal, showToast as pluginToast } from "./plugins/index";
   import TitleBar from "./components/TitleBar.svelte";
   import AnimeLibrary from "./components/AnimeLibrary.svelte";
   import AnimeDetail from "./components/AnimeDetail.svelte";
   import Settings from "./components/Settings.svelte";
+  import PluginSettings from "./components/PluginSettings.svelte";
   import type { Anime, ScanResult } from "./types/anime";
 
-  let currentView: "library" | "detail" | "settings" = "library";
+  let currentView: "library" | "detail" | "settings" | "plugins" = "library";
   let selectedAnime: Anime | null = null;
   let animeList: Anime[] = [];
   let searchQuery = "";
@@ -102,9 +104,36 @@
     applyTheme(loadTheme());
     await loadSettings();
     await loadAnimeList();
-    
+
+    setupPluginBridge();
+    await loadAllPlugins();
+
     document.addEventListener("contextmenu", (e) => e.preventDefault());
   });
+
+  function setupPluginBridge() {
+    const w = window as any;
+    w.__pluginAnimeList = () => animeList;
+    w.__pluginSettings = () => ({
+      libraryPath, isDark, colorScheme, bgStyle, glassMode, shadowStyle, motionLevel,
+    });
+    w.__pluginNavigate = (view: string, data?: any) => {
+      if (view === "library") { currentView = "library"; }
+      else if (view === "detail" && data) { selectedAnime = data; currentView = "detail"; }
+      else if (view === "settings") { currentView = "settings"; }
+      else if (view === "plugins") { currentView = "plugins"; }
+    };
+    w.__pluginShowModal = (options: any) => {
+      modalTitle = options.title;
+      modalMessage = typeof options.content === 'string' ? options.content : '';
+      showConfirm = false;
+      confirmCallback = null;
+      showModal = true;
+    };
+    w.__pluginShowToast = (options: any) => {
+      showMessage(options.message, options.type ?? 'info');
+    };
+  }
 
   function loadTheme(): boolean {
     try {
@@ -294,7 +323,10 @@
         onChangeCardOpacity={applyCardOpacity}
         titlebarOpacity={titlebarOpacity}
         onChangeTitlebarOpacity={applyTitlebarOpacity}
+        onOpenPlugins={() => currentView = "plugins"}
       />
+    {:else if currentView === "plugins"}
+      <PluginSettings onBack={() => currentView = "settings"} />
     {/if}
   </main>
 </div>

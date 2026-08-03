@@ -85,7 +85,8 @@
     "rule2": "[日本語名] [劇場版/OVA] [グループ]",
     "saveFailed": "保存に失敗しました",
     "language": "言語",
-    "languageHint": "表示言語を選択、設定は自動保存"
+    "languageHint": "表示言語を選択、設定は自動保存",
+    "plugins": "プラグイン管理"
   },
   "schemes": {
     "sakura": "桜",
@@ -143,5 +144,18 @@
     "es": "Español",
     "ar": "العربية",
     "pt": "Português"
+  },
+  "plugin": {
+    "title": "プラグイン管理",
+    "hint": "%APPDATA%/com.animemanager.app/plugins/ にプラグインフォルダを配置し、アプリを再起動すると認識されます",
+    "noPlugins": "プラグインなし",
+    "noPluginsHint": "上記ディレクトリにプラグインフォルダを配置してください",
+    "enable": "有効にする",
+    "disable": "無効にする",
+    "uninstall": "アンインストール",
+    "confirmUninstall": "アンインストール確認",
+    "confirmUninstallMsg": "{name} をアンインストールしますか？",
+    "uninstallSuccess": "アンインストール完了",
+    "uninstallFailed": "アンインストール失敗"
   }
 }

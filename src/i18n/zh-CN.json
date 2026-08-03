@@ -85,7 +85,8 @@
     "rule2": "[中文名] [剧场版/OVA] [字幕组]",
     "saveFailed": "保存失败",
     "language": "界面语言",
-    "languageHint": "选择界面显示语言，设置自动保存"
+    "languageHint": "选择界面显示语言，设置自动保存",
+    "plugins": "插件管理"
   },
   "schemes": {
     "sakura": "樱粉",
@@ -143,5 +144,18 @@
     "es": "Español",
     "ar": "العربية",
     "pt": "Português"
+  },
+  "plugin": {
+    "title": "插件管理",
+    "hint": "将插件文件夹放入 %APPDATA%/com.animemanager.app/plugins/ 目录中，重启应用后即可识别",
+    "noPlugins": "暂无插件",
+    "noPluginsHint": "将插件文件夹放入上述目录中",
+    "enable": "启用",
+    "disable": "禁用",
+    "uninstall": "卸载",
+    "confirmUninstall": "确认卸载",
+    "confirmUninstallMsg": "确定要卸载插件 {name} 吗？",
+    "uninstallSuccess": "卸载成功",
+    "uninstallFailed": "卸载失败"
   }
 }
