@@ -31,6 +31,7 @@
   let libraryPath = initialPath;
   let isSaving = false;
   let currentLanguage = getLanguage();
+  let activeTab = "general";
 
   $: bgUrlValue = customBgUrl;
 
@@ -203,237 +204,251 @@
 </script>
 
 <div class="settings-wrap">
+  <div class="settings-tabs">
+    <button class="tab-btn" class:active={activeTab === "general"} on:click={() => activeTab = "general"}>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      {$_('settings.tabGeneral')}
+    </button>
+    <button class="tab-btn" class:active={activeTab === "appearance"} on:click={() => activeTab = "appearance"}>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+      {$_('settings.tabAppearance')}
+    </button>
+    <button class="tab-btn" class:active={activeTab === "about"} on:click={() => activeTab = "about"}>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      {$_('settings.tabAbout')}
+    </button>
+  </div>
+
   <div class="settings-card">
-    <div class="setting-row">
-      <label>{$_('settings.libraryPath')}</label>
-      <div class="path-row">
-        <input type="text" bind:value={libraryPath} placeholder={$_('settings.pathPlaceholder')} />
-        <button class="ghost" on:click={browseDirectory}>{$_('app.browse')}</button>
-      </div>
-      <p class="hint">{$_('settings.pathHint')}</p>
-    </div>
-
-    <div class="setting-row">
-      <label>{$_('settings.language')}</label>
-      <div class="scheme-grid">
-        {#each languages as lang}
-          <button
-            class="scheme-card"
-            class:active={currentLanguage === lang.id}
-            on:click={() => changeLanguage(lang.id)}
-          >
-            <span class="scheme-name">{lang.name}</span>
-          </button>
-        {/each}
-      </div>
-      <p class="hint">{$_('settings.languageHint')}</p>
-    </div>
-
-    <div class="setting-row">
-      <label>{$_('settings.theme')}</label>
-      <div class="theme-toggle-row">
-        <button
-          class="theme-option"
-          class:active={!isDark}
-          on:click={() => isDark && onToggleTheme()}
-        >
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-          <span>{$_('settings.light')}</span>
-        </button>
-        <button
-          class="theme-option"
-          class:active={isDark}
-          on:click={() => !isDark && onToggleTheme()}
-        >
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          <span>{$_('settings.dark')}</span>
-        </button>
-      </div>
-      <p class="hint">{$_('settings.themeHint')}</p>
-    </div>
-
-    <div class="setting-row">
-      <label>{$_('settings.colorScheme')}</label>
-      <div class="scheme-grid">
-        {#each schemes as s}
-          <button
-            class="scheme-card"
-            class:active={colorScheme === s.id}
-            on:click={() => onChangeColorScheme(s.id)}
-          >
-            <div class="scheme-preview" style="background: linear-gradient(135deg, {s.light}, {s.dark})">
-              <div class="scheme-dot" style="background: {s.dark}"></div>
-            </div>
-            <span class="scheme-name">{$_(s.nameKey)}</span>
-          </button>
-        {/each}
-      </div>
-      <p class="hint">{$_('settings.colorSchemeHint')}</p>
-    </div>
-
-    <div class="setting-row">
-      <label>{$_('settings.borderRadius')}</label>
-      <div class="slider-row">
-        <span class="slider-label">{$_('settings.radiusSize')}</span>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={radiusScale}
-          on:input={(e) => onChangeRadiusScale(parseFloat(e.currentTarget.value))}
-        />
-        <span class="slider-value">{Math.round(radiusScale * 100)}%</span>
-      </div>
-      <p class="hint">{$_('settings.radiusHint')}</p>
-    </div>
-
-    <div class="setting-row">
-      <label>{$_('settings.background')}</label>
-      <div class="option-row">
-        {#each bgOptions as o}
-          <button
-            class="option-card"
-            class:active={bgStyle === o.id}
-            on:click={() => onChangeBgStyle(o.id, bgUrlValue)}
-          >
-            <div class="option-icon bg-{o.id}"></div>
-            <span class="option-name">{$_(o.nameKey)}</span>
-            <span class="option-desc">{$_(o.descKey)}</span>
-          </button>
-        {/each}
-      </div>
-      {#if bgStyle === "custom"}
-        <div class="bg-picker-row">
-          <button class="bg-picker-btn" on:click={pickBgImage}>
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            {$_('app.selectImage')}
-          </button>
-          {#if bgUrlValue}
-            <div class="bg-preview" style="background-image: url('{bgUrlValue}')"></div>
-            <button class="ghost bg-clear-btn" on:click={() => onChangeBgStyle("pure")}>{$_('app.clear')}</button>
-          {/if}
+    {#if activeTab === "general"}
+      <div class="setting-row">
+        <label>{$_('settings.libraryPath')}</label>
+        <div class="path-row">
+          <input type="text" bind:value={libraryPath} placeholder={$_('settings.pathPlaceholder')} />
+          <button class="ghost" on:click={browseDirectory}>{$_('app.browse')}</button>
         </div>
-        <p class="hint">{$_('settings.bgHint')}</p>
-        {#if bgUrlValue}
-          <div class="slider-row">
-            <span class="slider-label">{$_('settings.bgOpacity')}</span>
-            <input
-              type="range"
-              min="0.1"
-              max="1"
-              step="0.01"
-              value={bgOpacity}
-              on:input={(e) => onChangeBgOpacity(parseFloat(e.currentTarget.value))}
-            />
-            <span class="slider-value">{Math.round(bgOpacity * 100)}%</span>
+        <p class="hint">{$_('settings.pathHint')}</p>
+      </div>
+
+      <div class="setting-row">
+        <label>{$_('settings.language')}</label>
+        <div class="scheme-grid">
+          {#each languages as lang}
+            <button
+              class="scheme-card"
+              class:active={currentLanguage === lang.id}
+              on:click={() => changeLanguage(lang.id)}
+            >
+              <span class="scheme-name">{lang.name}</span>
+            </button>
+          {/each}
+        </div>
+        <p class="hint">{$_('settings.languageHint')}</p>
+      </div>
+    {:else if activeTab === "appearance"}
+      <div class="setting-row">
+        <label>{$_('settings.theme')}</label>
+        <div class="theme-toggle-row">
+          <button
+            class="theme-option"
+            class:active={!isDark}
+            on:click={() => isDark && onToggleTheme()}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <span>{$_('settings.light')}</span>
+          </button>
+          <button
+            class="theme-option"
+            class:active={isDark}
+            on:click={() => !isDark && onToggleTheme()}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <span>{$_('settings.dark')}</span>
+          </button>
+        </div>
+        <p class="hint">{$_('settings.themeHint')}</p>
+      </div>
+
+      <div class="setting-row">
+        <label>{$_('settings.colorScheme')}</label>
+        <div class="scheme-grid">
+          {#each schemes as s}
+            <button
+              class="scheme-card"
+              class:active={colorScheme === s.id}
+              on:click={() => onChangeColorScheme(s.id)}
+            >
+              <div class="scheme-preview" style="background: linear-gradient(135deg, {s.light}, {s.dark})">
+                <div class="scheme-dot" style="background: {s.dark}"></div>
+              </div>
+              <span class="scheme-name">{$_(s.nameKey)}</span>
+            </button>
+          {/each}
+        </div>
+        <p class="hint">{$_('settings.colorSchemeHint')}</p>
+      </div>
+
+      <div class="setting-row">
+        <label>{$_('settings.borderRadius')}</label>
+        <div class="slider-row">
+          <span class="slider-label">{$_('settings.radiusSize')}</span>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={radiusScale}
+            on:input={(e) => onChangeRadiusScale(parseFloat(e.currentTarget.value))}
+          />
+          <span class="slider-value">{Math.round(radiusScale * 100)}%</span>
+        </div>
+        <p class="hint">{$_('settings.radiusHint')}</p>
+      </div>
+
+      <div class="setting-row">
+        <label>{$_('settings.background')}</label>
+        <div class="option-row">
+          {#each bgOptions as o}
+            <button
+              class="option-card"
+              class:active={bgStyle === o.id}
+              on:click={() => onChangeBgStyle(o.id, bgUrlValue)}
+            >
+              <div class="option-icon bg-{o.id}"></div>
+              <span class="option-name">{$_(o.nameKey)}</span>
+              <span class="option-desc">{$_(o.descKey)}</span>
+            </button>
+          {/each}
+        </div>
+        {#if bgStyle === "custom"}
+          <div class="bg-picker-row">
+            <button class="bg-picker-btn" on:click={pickBgImage}>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              {$_('app.selectImage')}
+            </button>
+            {#if bgUrlValue}
+              <div class="bg-preview" style="background-image: url('{bgUrlValue}')"></div>
+              <button class="ghost bg-clear-btn" on:click={() => onChangeBgStyle("pure")}>{$_('app.clear')}</button>
+            {/if}
           </div>
+          <p class="hint">{$_('settings.bgHint')}</p>
+          {#if bgUrlValue}
+            <div class="slider-row">
+              <span class="slider-label">{$_('settings.bgOpacity')}</span>
+              <input
+                type="range"
+                min="0.1"
+                max="1"
+                step="0.01"
+                value={bgOpacity}
+                on:input={(e) => onChangeBgOpacity(parseFloat(e.currentTarget.value))}
+              />
+              <span class="slider-value">{Math.round(bgOpacity * 100)}%</span>
+            </div>
+          {/if}
         {/if}
-      {/if}
-    </div>
+      </div>
 
-    <div class="setting-row">
-      <label>{$_('settings.glassMode')}</label>
-      <div class="option-row">
-        {#each glassOptions as o}
-          <button
-            class="option-card"
-            class:active={glassMode === o.id}
-            on:click={() => onChangeGlassMode(o.id)}
-          >
-            <div class="option-icon glass-{o.id}"></div>
-            <span class="option-name">{$_(o.nameKey)}</span>
-            <span class="option-desc">{$_(o.descKey)}</span>
-          </button>
-        {/each}
+      <div class="setting-row">
+        <label>{$_('settings.glassMode')}</label>
+        <div class="option-row">
+          {#each glassOptions as o}
+            <button
+              class="option-card"
+              class:active={glassMode === o.id}
+              on:click={() => onChangeGlassMode(o.id)}
+            >
+              <div class="option-icon glass-{o.id}"></div>
+              <span class="option-name">{$_(o.nameKey)}</span>
+              <span class="option-desc">{$_(o.descKey)}</span>
+            </button>
+          {/each}
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">{$_('settings.cardOpacity')}</span>
+          <input
+            type="range"
+            min="0.2"
+            max="1"
+            step="0.01"
+            value={cardOpacity}
+            on:input={(e) => onChangeCardOpacity(parseFloat(e.currentTarget.value))}
+          />
+          <span class="slider-value">{Math.round(cardOpacity * 100)}%</span>
+        </div>
+        <p class="hint">{$_('settings.cardOpacityHint')}</p>
+        <div class="slider-row">
+          <span class="slider-label">{$_('settings.titlebarOpacity')}</span>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={titlebarOpacity}
+            on:input={(e) => onChangeTitlebarOpacity(parseFloat(e.currentTarget.value))}
+          />
+          <span class="slider-value">{Math.round(titlebarOpacity * 100)}%</span>
+        </div>
+        <p class="hint">{$_('settings.titlebarOpacityHint')}</p>
       </div>
-      <div class="slider-row">
-        <span class="slider-label">{$_('settings.cardOpacity')}</span>
-        <input
-          type="range"
-          min="0.2"
-          max="1"
-          step="0.01"
-          value={cardOpacity}
-          on:input={(e) => onChangeCardOpacity(parseFloat(e.currentTarget.value))}
-        />
-        <span class="slider-value">{Math.round(cardOpacity * 100)}%</span>
-      </div>
-      <p class="hint">{$_('settings.cardOpacityHint')}</p>
-      <div class="slider-row">
-        <span class="slider-label">{$_('settings.titlebarOpacity')}</span>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={titlebarOpacity}
-          on:input={(e) => onChangeTitlebarOpacity(parseFloat(e.currentTarget.value))}
-        />
-        <span class="slider-value">{Math.round(titlebarOpacity * 100)}%</span>
-      </div>
-      <p class="hint">{$_('settings.titlebarOpacityHint')}</p>
-    </div>
 
-    <div class="setting-row">
-      <label>{$_('settings.cardShadow')}</label>
-      <div class="option-row">
-        {#each shadowOptions as o}
-          <button
-            class="option-card"
-            class:active={shadowStyle === o.id}
-            on:click={() => onChangeShadowStyle(o.id)}
-          >
-            <div class="option-icon shadow-{o.id}"></div>
-            <span class="option-name">{$_(o.nameKey)}</span>
-            <span class="option-desc">{$_(o.descKey)}</span>
-          </button>
-        {/each}
+      <div class="setting-row">
+        <label>{$_('settings.cardShadow')}</label>
+        <div class="option-row">
+          {#each shadowOptions as o}
+            <button
+              class="option-card"
+              class:active={shadowStyle === o.id}
+              on:click={() => onChangeShadowStyle(o.id)}
+            >
+              <div class="option-icon shadow-{o.id}"></div>
+              <span class="option-name">{$_(o.nameKey)}</span>
+              <span class="option-desc">{$_(o.descKey)}</span>
+            </button>
+          {/each}
+        </div>
       </div>
-    </div>
 
-    <div class="setting-row">
-      <label>{$_('settings.animation')}</label>
-      <div class="option-row">
-        {#each motionOptions as o}
-          <button
-            class="option-card"
-            class:active={motionLevel === o.id}
-            on:click={() => onChangeMotionLevel(o.id)}
-          >
-            <div class="option-icon motion-{o.id}"></div>
-            <span class="option-name">{$_(o.nameKey)}</span>
-            <span class="option-desc">{$_(o.descKey)}</span>
-          </button>
-        {/each}
+      <div class="setting-row">
+        <label>{$_('settings.animation')}</label>
+        <div class="option-row">
+          {#each motionOptions as o}
+            <button
+              class="option-card"
+              class:active={motionLevel === o.id}
+              on:click={() => onChangeMotionLevel(o.id)}
+            >
+              <div class="option-icon motion-{o.id}"></div>
+              <span class="option-name">{$_(o.nameKey)}</span>
+              <span class="option-desc">{$_(o.descKey)}</span>
+            </button>
+          {/each}
+        </div>
       </div>
-    </div>
-
-    <div class="info-section">
-      <h3>{$_('settings.supportedFormats')}</h3>
-      <div class="fmt-list">
-        {#each ["mp4", "mkv", "avi", "mov", "wmv", "flv", "webm", "rmvb", "m4v"] as f}
-          <span class="fmt">{f}</span>
-        {/each}
+    {:else if activeTab === "about"}
+      <div class="info-section">
+        <h3>{$_('settings.supportedFormats')}</h3>
+        <div class="fmt-list">
+          {#each ["mp4", "mkv", "avi", "mov", "wmv", "flv", "webm", "rmvb", "m4v"] as f}
+            <span class="fmt">{f}</span>
+          {/each}
+        </div>
       </div>
-    </div>
 
-    <div class="info-section">
-      <h3>{$_('settings.namingRule')}</h3>
-      <div class="rule-list">
-        <span class="rule">{$_('settings.rule1')}</span>
-        <span class="rule">{$_('settings.rule2')}</span>
+      <div class="info-section">
+        <h3>{$_('settings.namingRule')}</h3>
+        <div class="rule-list">
+          <span class="rule">{$_('settings.rule1')}</span>
+          <span class="rule">{$_('settings.rule2')}</span>
+        </div>
       </div>
-    </div>
 
-    <div class="save-row">
-      <button class="plugins-btn" on:click={onOpenPlugins}>
-        {$_('settings.plugins')}
-      </button>
-      <button on:click={saveSettings} disabled={isSaving}>
-        {isSaving ? $_('app.saving') : $_('app.save')}
-      </button>
-    </div>
+      <div class="save-row">
+        <button class="plugins-btn" on:click={onOpenPlugins}>
+          {$_('settings.plugins')}
+        </button>
+      </div>
+    {/if}
   </div>
 </div>
 
@@ -458,6 +473,47 @@
 
 <style>
   .settings-wrap { max-width: 600px; margin: 0 auto; }
+
+  .settings-tabs {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    background: var(--surface-dim);
+    padding: 4px;
+    border-radius: var(--radius-lg);
+  }
+
+  .tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .tab-btn:hover {
+    color: var(--text-primary);
+    background: var(--surface);
+  }
+
+  .tab-btn.active {
+    background: var(--card-bg);
+    color: var(--accent-600);
+    box-shadow: var(--shadow-sm);
+  }
+
+  :global([data-theme="dark"]) .tab-btn.active {
+    color: var(--accent-400);
+  }
 
   .settings-card {
     background: var(--card-bg);

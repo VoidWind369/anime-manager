@@ -57,6 +57,9 @@
     "markWatched": "標記已看"
   },
   "settings": {
+    "tabGeneral": "通用",
+    "tabAppearance": "外觀",
+    "tabAbout": "關於",
     "libraryPath": "動漫庫目錄",
     "pathPlaceholder": "選擇目錄...",
     "pathHint": "程式將掃描此目錄下的所有動漫資料夾",

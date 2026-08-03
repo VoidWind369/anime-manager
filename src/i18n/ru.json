@@ -57,6 +57,9 @@
     "markWatched": "Отметить как просмотренное"
   },
   "settings": {
+    "tabGeneral": "Общие",
+    "tabAppearance": "Внешний вид",
+    "tabAbout": "О приложении",
     "libraryPath": "Каталог библиотеки",
     "pathPlaceholder": "Выбрать каталог...",
     "pathHint": "Приложение сканирует все папки аниме в этом каталоге",

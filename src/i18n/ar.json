@@ -57,6 +57,9 @@
     "markWatched": "تحديد كمُشاهد"
   },
   "settings": {
+    "tabGeneral": "عام",
+    "tabAppearance": "المظهر",
+    "tabAbout": "حول",
     "libraryPath": "مجلد المكتبة",
     "pathPlaceholder": "اختر مجلد...",
     "pathHint": "سيقوم التطبيق بفحص جميع مجلدات الأنمي في هذا المجلد",

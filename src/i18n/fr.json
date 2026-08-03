@@ -57,6 +57,9 @@
     "markWatched": "Marquer comme regardé"
   },
   "settings": {
+    "tabGeneral": "Général",
+    "tabAppearance": "Apparence",
+    "tabAbout": "À propos",
     "libraryPath": "Répertoire de la bibliothèque",
     "pathPlaceholder": "Sélectionner un répertoire...",
     "pathHint": "L'application analysera tous les dossiers d'anime dans ce répertoire",

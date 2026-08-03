@@ -57,6 +57,9 @@
     "markWatched": "Mark as watched"
   },
   "settings": {
+    "tabGeneral": "General",
+    "tabAppearance": "Appearance",
+    "tabAbout": "About",
     "libraryPath": "Library Directory",
     "pathPlaceholder": "Select directory...",
     "pathHint": "The app will scan all anime folders in this directory",

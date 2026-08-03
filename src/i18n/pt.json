@@ -57,6 +57,9 @@
     "markWatched": "Marcar como assistido"
   },
   "settings": {
+    "tabGeneral": "Geral",
+    "tabAppearance": "Aparência",
+    "tabAbout": "Sobre",
     "libraryPath": "Diretório da biblioteca",
     "pathPlaceholder": "Selecionar diretório...",
     "pathHint": "O aplicativo escaneará todas as pastas de anime neste diretório",

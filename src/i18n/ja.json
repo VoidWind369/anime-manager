@@ -57,6 +57,9 @@
     "markWatched": "視聴済みに設定"
   },
   "settings": {
+    "tabGeneral": "一般",
+    "tabAppearance": "外観",
+    "tabAbout": "情報",
     "libraryPath": "ライブラリディレクトリ",
     "pathPlaceholder": "ディレクトリを選択...",
     "pathHint": "このディレクトリ内のすべてのアニメフォルダをスキャンします",

@@ -57,6 +57,9 @@
     "markWatched": "标记已看"
   },
   "settings": {
+    "tabGeneral": "通用",
+    "tabAppearance": "外观",
+    "tabAbout": "关于",
     "libraryPath": "动漫库目录",
     "pathPlaceholder": "选择目录...",
     "pathHint": "程序将扫描此目录下的所有动漫文件夹",
