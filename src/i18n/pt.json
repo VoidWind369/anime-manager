@@ -59,6 +59,7 @@
   "settings": {
     "tabGeneral": "Geral",
     "tabAppearance": "Aparência",
+    "tabPlugins": "Plugins",
     "tabAbout": "Sobre",
     "libraryPath": "Diretório da biblioteca",
     "pathPlaceholder": "Selecionar diretório...",
@@ -150,7 +151,7 @@
   },
   "plugin": {
     "title": "Gerenciar plugins",
-    "hint": "Coloque as pastas dos plugins em %APPDATA%/com.animemanager.app/plugins/ e reinicie o aplicativo",
+    "hint": "Coloque as pastas dos plugins em %APPDATA%/AnimeManager/plugins/ e reinicie o aplicativo",
     "noPlugins": "Nenhum plugin",
     "noPluginsHint": "Coloque as pastas dos plugins no diretório acima",
     "enable": "Ativar",

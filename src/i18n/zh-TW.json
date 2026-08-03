@@ -59,6 +59,7 @@
   "settings": {
     "tabGeneral": "通用",
     "tabAppearance": "外觀",
+    "tabPlugins": "插件",
     "tabAbout": "關於",
     "libraryPath": "動漫庫目錄",
     "pathPlaceholder": "選擇目錄...",
@@ -150,7 +151,7 @@
   },
   "plugin": {
     "title": "插件管理",
-    "hint": "將插件資料夾放入 %APPDATA%/com.animemanager.app/plugins/ 目錄中，重啟應用後即可識別",
+    "hint": "將插件資料夾放入 %APPDATA%/AnimeManager/plugins/ 目錄中，重啟應用後即可識別",
     "noPlugins": "暫無插件",
     "noPluginsHint": "將插件資料夾放入上述目錄中",
     "enable": "啟用",

@@ -59,6 +59,7 @@
   "settings": {
     "tabGeneral": "Общие",
     "tabAppearance": "Внешний вид",
+    "tabPlugins": "Плагины",
     "tabAbout": "О приложении",
     "libraryPath": "Каталог библиотеки",
     "pathPlaceholder": "Выбрать каталог...",
@@ -150,7 +151,7 @@
   },
   "plugin": {
     "title": "Управление плагинами",
-    "hint": "Поместите папки плагинов в %APPDATA%/com.animemanager.app/plugins/ и перезапустите приложение",
+    "hint": "Поместите папки плагинов в %APPDATA%/AnimeManager/plugins/ и перезапустите приложение",
     "noPlugins": "Нет плагинов",
     "noPluginsHint": "Поместите папки плагинов в указанную директорию",
     "enable": "Включить",

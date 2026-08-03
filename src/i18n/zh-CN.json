@@ -59,6 +59,7 @@
   "settings": {
     "tabGeneral": "通用",
     "tabAppearance": "外观",
+    "tabPlugins": "插件",
     "tabAbout": "关于",
     "libraryPath": "动漫库目录",
     "pathPlaceholder": "选择目录...",
@@ -150,15 +151,18 @@
   },
   "plugin": {
     "title": "插件管理",
-    "hint": "将插件文件夹放入 %APPDATA%/com.animemanager.app/plugins/ 目录中，重启应用后即可识别",
+    "hint": "将插件文件夹放入 %APPDATA%/AnimeManager/plugins/ 目录中，重启应用后即可识别",
     "noPlugins": "暂无插件",
     "noPluginsHint": "将插件文件夹放入上述目录中",
     "enable": "启用",
     "disable": "禁用",
+    "settings": "设置",
     "uninstall": "卸载",
     "confirmUninstall": "确认卸载",
     "confirmUninstallMsg": "确定要卸载插件 {name} 吗？",
     "uninstallSuccess": "卸载成功",
-    "uninstallFailed": "卸载失败"
+    "uninstallFailed": "卸载失败",
+    "settingsTitle": "{name} 设置",
+    "settingsSaved": "设置已保存"
   }
 }

@@ -59,6 +59,7 @@
   "settings": {
     "tabGeneral": "عام",
     "tabAppearance": "المظهر",
+    "tabPlugins": "الإضافات",
     "tabAbout": "حول",
     "libraryPath": "مجلد المكتبة",
     "pathPlaceholder": "اختر مجلد...",
@@ -150,7 +151,7 @@
   },
   "plugin": {
     "title": "إدارة الإضافات",
-    "hint": "ضع مجلدات الإضافات في %APPDATA%/com.animemanager.app/plugins/ وأعد تشغيل التطبيق",
+    "hint": "ضع مجلدات الإضافات في %APPDATA%/AnimeManager/plugins/ وأعد تشغيل التطبيق",
     "noPlugins": "لا توجد إضافات",
     "noPluginsHint": "ضع مجلدات الإضافات في المجلد أعلاه",
     "enable": "تفعيل",

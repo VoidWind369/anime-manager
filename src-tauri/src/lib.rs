@@ -48,6 +48,8 @@ pub fn run() {
             commands::delete_anime,
             commands::rename_anime_directory,
             commands::organize_multi_season,
+            commands::get_plugins_dir,
+            commands::read_plugin_file,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

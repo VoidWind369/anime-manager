@@ -2,11 +2,23 @@ import type { PluginManifest, PluginInstance, PluginContext } from './types';
 import { createPluginContext } from './api';
 import { addPlugin, plugins, setPluginState } from './registry';
 
-const PLUGIN_BASE_PATH = 'plugins';
+let cachedPluginsPath: string | null = null;
 
-function getPluginsPath(): string {
+async function getPluginsPath(): Promise<string> {
+  if (cachedPluginsPath) return cachedPluginsPath;
   const w = window as any;
-  return w.__pluginsDir ?? `${PLUGIN_BASE_PATH}`;
+  if (w.__pluginsDir) {
+    cachedPluginsPath = w.__pluginsDir;
+    return cachedPluginsPath;
+  }
+  try {
+    const { invoke } = await import('../utils/tauri-adapter');
+    cachedPluginsPath = await invoke('get_plugins_dir');
+    return cachedPluginsPath!;
+  } catch (e) {
+    console.warn('[PluginLoader] Failed to get plugins dir:', e);
+    return 'plugins';
+  }
 }
 
 function normalizeManifest(raw: any): PluginManifest {
@@ -23,7 +35,7 @@ function normalizeManifest(raw: any): PluginManifest {
 }
 
 export async function loadAllPlugins(): Promise<void> {
-  const basePath = getPluginsPath();
+  const basePath = await getPluginsPath();
   let pluginDirs: string[] = [];
 
   try {
@@ -74,14 +86,18 @@ async function loadPlugin(basePath: string, dir: string): Promise<void> {
 }
 
 async function instantiatePlugin(basePath: string, dir: string, manifest: PluginManifest): Promise<void> {
-  const entryPath = `${basePath}\\${dir}\\${manifest.main}`;
   const pluginCtx: PluginContext = createPluginContext(manifest.id);
 
   (window as any).__pluginBasePath = (id: string) => `${basePath}\\${id}`;
 
   try {
-    const moduleUrl = `file:///${entryPath.replace(/\\/g, '/')}?t=${Date.now()}`;
-    const mod = await import(/* @vite-ignore */ moduleUrl);
+    const { invoke } = await import('../utils/tauri-adapter');
+    const fileBytes: number[] = await invoke('read_plugin_file', { path: `${dir}\\${manifest.main}` });
+    const jsCode = new TextDecoder().decode(new Uint8Array(fileBytes));
+    const blob = new Blob([jsCode], { type: 'application/javascript' });
+    const blobUrl = URL.createObjectURL(blob);
+    const mod = await import(/* @vite-ignore */ blobUrl);
+    URL.revokeObjectURL(blobUrl);
 
     const instance: PluginInstance = {
       onLoad: mod.onLoad,
@@ -115,7 +131,7 @@ export async function enablePlugin(id: string): Promise<void> {
   localStorage.setItem(`plugin:${id}:enabled`, 'true');
 
   if (!state.loaded) {
-    const basePath = getPluginsPath();
+    const basePath = await getPluginsPath();
     const dir = id;
     await instantiatePlugin(basePath, dir, state.manifest);
   } else if (state.instance?.onEnable) {
@@ -144,7 +160,7 @@ export async function uninstallPlugin(id: string): Promise<void> {
     try { await state.instance.onUnload(); } catch (e) { console.error(e); }
   }
 
-  const basePath = getPluginsPath();
+  const basePath = await getPluginsPath();
   try {
     const { remove } = await import('@tauri-apps/plugin-fs');
     await remove(`${basePath}\\${id}`, { recursive: true });

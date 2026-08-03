@@ -1,0 +1,35 @@
+{
+  "id": "anime-stats",
+  "name": "动漫统计",
+  "version": "1.1.0",
+  "description": "查看动漫库统计信息：总集数、已看集数、完成率、季分布等",
+  "author": "AnimeManager",
+  "main": "index.js",
+  "hooks": [],
+  "settings": [
+    {
+      "key": "maxGroups",
+      "label": "字幕组最多显示",
+      "type": "number",
+      "default": 8,
+      "placeholder": "默认 8"
+    },
+    {
+      "key": "showSeasonChart",
+      "label": "显示季分布图",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "colorTheme",
+      "label": "图表配色",
+      "type": "select",
+      "default": "multi",
+      "options": [
+        { "label": "多彩", "value": "multi" },
+        { "label": "单色", "value": "mono" },
+        { "label": "渐变", "value": "gradient" }
+      ]
+    }
+  ]
+}

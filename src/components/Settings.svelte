@@ -1,7 +1,9 @@
 <script lang="ts">
   import { invoke } from "../utils/tauri-adapter";
   import { _ } from "svelte-i18n";
+  import { slide } from "svelte/transition";
   import { setLanguage, getLanguage } from "../i18n/index";
+  import { getAllPlugins, togglePlugin, type PluginState, type PluginSettingDef } from "../plugins/index";
 
   export let initialPath: string;
   export let onSave: (path: string) => void;
@@ -26,12 +28,74 @@
   export let onChangeCardOpacity: (v: number) => void;
   export let titlebarOpacity: number = 0.8;
   export let onChangeTitlebarOpacity: (v: number) => void;
-  export let onOpenPlugins: () => void = () => {};
 
   let libraryPath = initialPath;
   let isSaving = false;
   let currentLanguage = getLanguage();
   let activeTab = "general";
+
+  let pluginList: PluginState[] = [];
+  let editingPluginId: string | null = null;
+  let pluginSettingsValues: Record<string, any> = {};
+  let showConfirmModal = false;
+  let confirmTarget: PluginState | null = null;
+
+  function refreshPlugins() {
+    pluginList = getAllPlugins();
+  }
+
+  refreshPlugins();
+
+  function handlePluginToggle(p: PluginState) {
+    togglePlugin(p.id);
+    refreshPlugins();
+  }
+
+  function togglePluginSettings(p: PluginState) {
+    if (editingPluginId === p.id) {
+      editingPluginId = null;
+      return;
+    }
+    editingPluginId = p.id;
+    pluginSettingsValues = {};
+    const saved = localStorage.getItem(`plugin:${p.id}:settings`);
+    if (saved) {
+      try { pluginSettingsValues = JSON.parse(saved); } catch {}
+    }
+    if (p.manifest.settings) {
+      for (const s of p.manifest.settings) {
+        if (!(s.key in pluginSettingsValues) && s.default !== undefined) {
+          pluginSettingsValues[s.key] = s.default;
+        }
+      }
+    }
+  }
+
+  function savePluginSettings() {
+    if (!editingPluginId) return;
+    localStorage.setItem(`plugin:${editingPluginId}:settings`, JSON.stringify(pluginSettingsValues));
+    const p = pluginList.find(x => x.id === editingPluginId);
+    if (p?.instance?.onSettingsChange) {
+      p.instance.onSettingsChange(pluginSettingsValues);
+    }
+    editingPluginId = null;
+  }
+
+  function confirmPluginUninstall(p: PluginState) {
+    confirmTarget = p;
+    showConfirmModal = true;
+  }
+
+  function doPluginUninstall() {
+    if (!confirmTarget) return;
+    import("../plugins/loader").then(({ uninstallPlugin }) => {
+      uninstallPlugin(confirmTarget!.id).then(() => {
+        refreshPlugins();
+      });
+    });
+    confirmTarget = null;
+    showConfirmModal = false;
+  }
 
   $: bgUrlValue = customBgUrl;
 
@@ -205,18 +269,22 @@
 
 <div class="settings-wrap">
   <div class="settings-tabs">
-    <button class="tab-btn" class:active={activeTab === "general"} on:click={() => activeTab = "general"}>
+    <div class="tab-item" class:active={activeTab === "general"} on:click={() => activeTab = "general"} on:keydown={() => {}}>
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      {$_('settings.tabGeneral')}
-    </button>
-    <button class="tab-btn" class:active={activeTab === "appearance"} on:click={() => activeTab = "appearance"}>
+      <span>{$_('settings.tabGeneral')}</span>
+    </div>
+    <div class="tab-item" class:active={activeTab === "appearance"} on:click={() => activeTab = "appearance"} on:keydown={() => {}}>
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
-      {$_('settings.tabAppearance')}
-    </button>
-    <button class="tab-btn" class:active={activeTab === "about"} on:click={() => activeTab = "about"}>
+      <span>{$_('settings.tabAppearance')}</span>
+    </div>
+    <div class="tab-item" class:active={activeTab === "about"} on:click={() => activeTab = "about"} on:keydown={() => {}}>
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-      {$_('settings.tabAbout')}
-    </button>
+      <span>{$_('settings.tabAbout')}</span>
+    </div>
+    <div class="tab-item" class:active={activeTab === "plugins"} on:click={() => activeTab = "plugins"} on:keydown={() => {}}>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      <span>{$_('settings.tabPlugins')}</span>
+    </div>
   </div>
 
   <div class="settings-card">
@@ -442,12 +510,108 @@
           <span class="rule">{$_('settings.rule2')}</span>
         </div>
       </div>
+    {:else if activeTab === "plugins"}
+      <p class="hint" style="margin-bottom: var(--space-4);">{$_('plugin.hint')}</p>
+      {#if pluginList.length === 0}
+        <div class="plugin-empty">
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+          <p>{$_('plugin.noPlugins')}</p>
+          <span>{$_('plugin.noPluginsHint')}</span>
+        </div>
+      {:else}
+        <div class="plugin-list">
+          {#each pluginList as p (p.id)}
+            <div class="plugin-card" class:disabled={!p.enabled}>
+              <div class="plugin-card-top">
+                <div class="plugin-info">
+                  <div class="plugin-name">{p.manifest.name}</div>
+                  <div class="plugin-meta">
+                    <span class="plugin-version">v{p.manifest.version}</span>
+                    <span class="plugin-author">{p.manifest.author}</span>
+                  </div>
+                  <div class="plugin-desc">{p.manifest.description}</div>
+                  {#if p.error}
+                    <div class="plugin-error">{p.error}</div>
+                  {/if}
+                </div>
+                <div class="plugin-actions">
+                  {#if p.manifest.settings && p.manifest.settings.length > 0}
+                    <button
+                      class="plugin-settings-btn"
+                      class:active={editingPluginId === p.id}
+                      on:click={() => togglePluginSettings(p)}
+                    >
+                      {$_('plugin.settings')}
+                    </button>
+                  {/if}
+                  <button
+                    class="toggle-btn"
+                    class:active={p.enabled}
+                    on:click={() => handlePluginToggle(p)}
+                  >
+                    {p.enabled ? $_('plugin.disable') : $_('plugin.enable')}
+                  </button>
+                  <button class="uninstall-btn" on:click={() => confirmPluginUninstall(p)}>
+                    {$_('plugin.uninstall')}
+                  </button>
+                </div>
+              </div>
 
-      <div class="save-row">
-        <button class="plugins-btn" on:click={onOpenPlugins}>
-          {$_('settings.plugins')}
-        </button>
-      </div>
+              {#if editingPluginId === p.id && p.manifest.settings}
+                <div class="plugin-settings-inline" transition:slide={{ duration: 200 }}>
+                  {#each p.manifest.settings as setting}
+                    <div class="plugin-setting-row">
+                      <label class="plugin-setting-label">{setting.label}</label>
+                      {#if setting.type === 'text' || setting.type === 'password'}
+                        <input
+                          type={setting.type}
+                          class="plugin-setting-input"
+                          placeholder={setting.placeholder}
+                          value={pluginSettingsValues[setting.key] ?? ''}
+                          on:input={(e) => pluginSettingsValues[setting.key] = e.currentTarget.value}
+                        />
+                      {:else if setting.type === 'number'}
+                        <input
+                          type="number"
+                          class="plugin-setting-input"
+                          placeholder={setting.placeholder}
+                          value={pluginSettingsValues[setting.key] ?? ''}
+                          on:input={(e) => pluginSettingsValues[setting.key] = parseFloat(e.currentTarget.value) || 0}
+                        />
+                      {:else if setting.type === 'boolean'}
+                        <label class="plugin-toggle">
+                          <input
+                            type="checkbox"
+                            checked={pluginSettingsValues[setting.key] ?? false}
+                            on:change={(e) => pluginSettingsValues[setting.key] = e.currentTarget.checked}
+                          />
+                          <span class="plugin-toggle-slider"></span>
+                        </label>
+                      {:else if setting.type === 'select'}
+                        <select
+                          class="plugin-setting-input"
+                          value={pluginSettingsValues[setting.key] ?? setting.default ?? ''}
+                          on:change={(e) => pluginSettingsValues[setting.key] = e.currentTarget.value}
+                        >
+                          {#each setting.options as opt}
+                            <option value={opt.value}>{opt.label}</option>
+                          {/each}
+                        </select>
+                      {/if}
+                    </div>
+                  {/each}
+                  <div class="plugin-settings-footer">
+                    <button class="modal-cancel" on:click={() => editingPluginId = null}>{$_('app.cancel')}</button>
+                    <button class="modal-confirm" on:click={savePluginSettings}>{$_('app.ok')}</button>
+                  </div>
+                </div>
+              {/if}
+            </div>
+          {/each}
+        </div>
+      {/if}
     {/if}
   </div>
 </div>
@@ -471,6 +635,23 @@
   </div>
 {/if}
 
+{#if showConfirmModal}
+  <div class="modal-overlay" on:click={() => showConfirmModal = false}>
+    <div class="modal-content" on:click|stopPropagation>
+      <div class="modal-header">
+        <h3 class="modal-title">{$_('plugin.confirmUninstall')}</h3>
+      </div>
+      <div class="modal-body">
+        <p>{$_('plugin.confirmUninstallMsg', { values: { name: confirmTarget?.manifest.name ?? '' } })}</p>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-cancel" on:click={() => showConfirmModal = false}>{$_('app.cancel')}</button>
+        <button class="modal-confirm danger" on:click={doPluginUninstall}>{$_('app.confirm')}</button>
+      </div>
+    </div>
+  </div>
+{/if}
+
 <style>
   .settings-wrap { max-width: 600px; margin: 0 auto; }
 
@@ -480,34 +661,32 @@
     margin-bottom: var(--space-6);
   }
 
-  .tab-btn {
+  .tab-item {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
-    padding: var(--space-4) var(--space-4);
-    font-size: 0.9rem;
+    padding: var(--space-3) var(--space-4);
+    font-size: 0.88rem;
     font-weight: 500;
     color: var(--text-tertiary);
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
     cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.2s ease, border-color 0.2s ease;
   }
 
-  .tab-btn:hover {
+  .tab-item:hover {
     color: var(--text-primary);
   }
 
-  .tab-btn.active {
+  .tab-item.active {
     color: var(--accent-600);
     border-bottom-color: var(--accent-500);
   }
 
-  :global([data-theme="dark"]) .tab-btn.active {
+  :global([data-theme="dark"]) .tab-item.active {
     color: var(--accent-400);
     border-bottom-color: var(--accent-400);
   }
@@ -565,7 +744,11 @@
   }
 
   .save-row { display: flex; justify-content: flex-end; gap: 12px; }
-  .plugins-btn { background: var(--surface) !important; border: 1px solid var(--accent-200) !important; }
+  .plugins-btn {
+    background: var(--surface-dim) !important;
+    border: 1px solid var(--accent-200) !important;
+    color: var(--text-primary) !important;
+  }
 
   /* 主题切换 */
   .theme-toggle-row {
@@ -965,4 +1148,106 @@
   :global([data-theme="dark"]) .btn-outline {
     border-color: var(--accent-400);
   }
+
+  /* 插件列表 */
+  .plugin-empty {
+    text-align: center;
+    padding: var(--space-8) 0;
+    color: var(--text-tertiary);
+  }
+  .plugin-empty svg { margin-bottom: var(--space-3); }
+  .plugin-empty p { font-size: 0.95rem; margin: 0 0 var(--space-2); color: var(--text-secondary); }
+  .plugin-empty span { font-size: 0.82rem; }
+
+  .plugin-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .plugin-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .plugin-card.disabled { opacity: 0.5; }
+
+  .plugin-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .plugin-info { flex: 1; min-width: 0; }
+  .plugin-name { font-weight: 600; color: var(--text-primary); font-size: 0.95rem; }
+  .plugin-meta { display: flex; gap: var(--space-3); margin-top: var(--space-1); }
+  .plugin-version, .plugin-author { font-size: 0.78rem; color: var(--text-tertiary); }
+  .plugin-desc { font-size: 0.82rem; color: var(--text-secondary); margin-top: var(--space-2); line-height: 1.4; }
+  .plugin-error {
+    font-size: 0.78rem; color: #ef4444; margin-top: var(--space-2);
+    padding: var(--space-2) var(--space-3); background: rgba(239,68,68,0.1); border-radius: var(--radius-sm);
+  }
+
+  .plugin-actions { display: flex; gap: var(--space-2); flex-shrink: 0; }
+
+  .toggle-btn, .uninstall-btn, .plugin-settings-btn {
+    padding: 6px 14px; border-radius: var(--radius-pill); font-size: 0.78rem; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border); background: var(--surface);
+    color: var(--text-secondary); transition: all 0.2s ease;
+  }
+  .toggle-btn.active { background: var(--accent-500); color: white; border-color: var(--accent-500); }
+  .toggle-btn:hover { background: var(--accent-50); }
+  .toggle-btn.active:hover { background: var(--accent-600); }
+  .plugin-settings-btn:hover { border-color: var(--accent-400); color: var(--accent-600); }
+  .plugin-settings-btn.active { background: var(--accent-500); color: white; border-color: var(--accent-500); }
+  .plugin-settings-btn.active:hover { background: var(--accent-600); }
+  .uninstall-btn:hover { color: #ef4444; border-color: #ef4444; background: rgba(239,68,68,0.05); }
+
+  /* 插件设置内联面板 */
+  .plugin-settings-inline {
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-4);
+  }
+  .plugin-settings-footer {
+    display: flex; justify-content: flex-end; gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+
+  /* 插件设置表单 */
+  .plugin-setting-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--space-3) 0; border-bottom: 1px solid var(--border);
+  }
+  .plugin-setting-row:last-child { border-bottom: none; }
+  .plugin-setting-label { font-size: 0.88rem; color: var(--text-primary); font-weight: 500; }
+  .plugin-setting-input {
+    width: 200px; padding: 6px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    font-size: 0.85rem; background: var(--surface); color: var(--text-primary);
+  }
+  .plugin-setting-input:focus { border-color: var(--accent-400); outline: none; }
+  select.plugin-setting-input { cursor: pointer; }
+
+  .plugin-toggle { position: relative; display: inline-block; width: 40px; height: 22px; cursor: pointer; }
+  .plugin-toggle input { opacity: 0; width: 0; height: 0; }
+  .plugin-toggle-slider {
+    position: absolute; inset: 0; background: var(--border); border-radius: 11px; transition: 0.2s;
+  }
+  .plugin-toggle-slider::before {
+    content: ""; position: absolute; width: 18px; height: 18px; left: 2px; bottom: 2px;
+    background: white; border-radius: 50%; transition: 0.2s;
+  }
+  .plugin-toggle input:checked + .plugin-toggle-slider { background: var(--accent-500); }
+  .plugin-toggle input:checked + .plugin-toggle-slider::before { transform: translateX(18px); }
+
+  .modal-cancel {
+    background: var(--surface-dim); color: var(--text-secondary); padding: var(--space-2) var(--space-5);
+    border-radius: var(--radius-sm); border: 1px solid var(--border); font-weight: 500; cursor: pointer;
+  }
+  .modal-cancel:hover { background: var(--surface); color: var(--text-primary); border-color: var(--border-strong); }
+  .modal-confirm.danger { background: #ef4444; border-color: #ef4444; }
 </style>

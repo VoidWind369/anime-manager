@@ -285,4 +285,26 @@ pub async fn organize_multi_season(
     organizer::organize_multi_season_anime(&root, &options).map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+pub fn get_plugins_dir(app: AppHandle) -> Result<String, String> {
+    let dir = app
+        .path()
+        .app_data_dir()
+        .map_err(|e| e.to_string())?
+        .join("plugins");
+    std::fs::create_dir_all(&dir).ok();
+    Ok(dir.to_string_lossy().to_string())
+}
+
+#[tauri::command]
+pub fn read_plugin_file(app: AppHandle, path: String) -> Result<Vec<u8>, String> {
+    let plugins_dir = app
+        .path()
+        .app_data_dir()
+        .map_err(|e| e.to_string())?
+        .join("plugins");
+    let full_path = plugins_dir.join(&path);
+    std::fs::read(&full_path).map_err(|e| format!("Failed to read {}: {}", path, e))
+}
+
 

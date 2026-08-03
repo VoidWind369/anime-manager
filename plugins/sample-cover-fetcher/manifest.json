@@ -1,0 +1,9 @@
+{
+  "id": "sample-cover-fetcher",
+  "name": "封面抓取器",
+  "version": "1.0.0",
+  "description": "示例插件：为没有封面的动漫抓取封面图片",
+  "author": "AnimeManager",
+  "main": "index.js",
+  "hooks": ["onAnimeSelect"]
+}

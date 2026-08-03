@@ -150,7 +150,7 @@
   },
   "plugin": {
     "title": "プラグイン管理",
-    "hint": "%APPDATA%/com.animemanager.app/plugins/ にプラグインフォルダを配置し、アプリを再起動すると認識されます",
+    "hint": "%APPDATA%/AnimeManager/plugins/ にプラグインフォルダを配置し、アプリを再起動すると認識されます",
     "noPlugins": "プラグインなし",
     "noPluginsHint": "上記ディレクトリにプラグインフォルダを配置してください",
     "enable": "有効にする",

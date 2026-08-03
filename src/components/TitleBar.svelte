@@ -12,6 +12,25 @@
   export let onBack: () => void;
   export let onScan: () => void;
   export let onSettings: () => void;
+  export let pluginToolbarButtons: { icon: string; title: string; onClick: () => void }[] = [];
+
+  let showPluginMenu = false;
+
+  function handlePluginClick(btn: { icon: string; title: string; onClick: () => void }) {
+    showPluginMenu = false;
+    btn.onClick();
+  }
+
+  function handleClickOutside(e: MouseEvent) {
+    const target = e.target as HTMLElement;
+    if (!target.closest('.plugin-menu-wrap')) {
+      showPluginMenu = false;
+    }
+  }
+
+  $: if (showPluginMenu) {
+    setTimeout(() => document.addEventListener('click', handleClickOutside, { once: true }), 0);
+  }
 
   async function minimizeWindow() {
     try { await invoke("minimize_window"); } catch (_) {}
@@ -74,6 +93,23 @@
       <button class="ghost-icon-btn" on:click={onSettings} aria-label={$_('titlebar.settings')}>
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.01.6.46 1.1 1 1.2h.09a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
+    {/if}
+    {#if pluginToolbarButtons.length > 0}
+      <div class="plugin-menu-wrap">
+        <button class="ghost-icon-btn plugin-trigger" on:click|stopPropagation={() => showPluginMenu = !showPluginMenu} title="插件">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </button>
+        {#if showPluginMenu}
+          <div class="plugin-dropdown">
+            {#each pluginToolbarButtons as btn}
+              <button class="plugin-dropdown-item" on:click={() => handlePluginClick(btn)}>
+                <span class="plugin-dropdown-icon">{@html btn.icon}</span>
+                <span class="plugin-dropdown-label">{btn.title}</span>
+              </button>
+            {/each}
+          </div>
+        {/if}
+      </div>
     {/if}
     <button class="ghost-icon-btn theme-toggle" on:click={onToggleTheme} aria-label={isDark ? $_('titlebar.toggleLight') : $_('titlebar.toggleDark')}>
       {#if isDark}
@@ -289,6 +325,64 @@
     color: var(--accent-500);
   }
 
+  .plugin-menu-wrap {
+    position: relative;
+  }
+
+  .plugin-trigger :global(svg) {
+    width: 15px;
+    height: 15px;
+  }
+
+  .plugin-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    min-width: 160px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    padding: 4px;
+    animation: dropdownIn 0.15s ease;
+  }
+
+  @keyframes dropdownIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .plugin-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s ease;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+  }
+
+  .plugin-dropdown-item:hover {
+    background: rgba(var(--accent-rgb), 0.08);
+  }
+
+  .plugin-dropdown-icon :global(svg) {
+    width: 15px;
+    height: 15px;
+    color: var(--text-secondary);
+  }
+
+  .plugin-dropdown-item:hover .plugin-dropdown-icon :global(svg) {
+    color: var(--accent-500);
+  }
+
   .theme-toggle {
     display: flex;
     align-items: center;
@@ -406,5 +500,26 @@
   :global([data-theme="dark"]) .window-btn.close:hover {
     background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
     color: white;
+  }
+
+  :global([data-theme="dark"]) .plugin-dropdown {
+    background: var(--surface);
+    border-color: var(--border);
+  }
+
+  :global([data-theme="dark"]) .plugin-dropdown-item {
+    color: var(--text-primary);
+  }
+
+  :global([data-theme="dark"]) .plugin-dropdown-item:hover {
+    background: rgba(var(--accent-rgb), 0.15);
+  }
+
+  :global([data-theme="dark"]) .plugin-dropdown-icon :global(svg) {
+    color: var(--text-secondary);
+  }
+
+  :global([data-theme="dark"]) .plugin-dropdown-item:hover .plugin-dropdown-icon :global(svg) {
+    color: var(--accent-300);
   }
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, afterUpdate } from "svelte";
   import { invoke } from "./utils/tauri-adapter";
   import { _ } from "svelte-i18n";
   import "./i18n/index";
@@ -8,10 +8,9 @@
   import AnimeLibrary from "./components/AnimeLibrary.svelte";
   import AnimeDetail from "./components/AnimeDetail.svelte";
   import Settings from "./components/Settings.svelte";
-  import PluginSettings from "./components/PluginSettings.svelte";
   import type { Anime, ScanResult } from "./types/anime";
 
-  let currentView: "library" | "detail" | "settings" | "plugins" = "library";
+  let currentView: "library" | "detail" | "settings" = "library";
   let selectedAnime: Anime | null = null;
   let animeList: Anime[] = [];
   let searchQuery = "";
@@ -29,15 +28,20 @@
   let cardOpacity = 1;
   let titlebarOpacity = 0.8;
 
+  let pluginToolbarVersion = 0;
+  $: currentPluginToolbarButtons = pluginToolbarVersion >= 0 ? Array.from(toolbarButtons.values()) : [];
+
   let showModal = false;
   let modalTitle = "";
   let modalMessage = "";
+  let modalContentHtml: HTMLElement | null = null;
   let showConfirm = false;
   let confirmCallback: (() => void) | null = null;
 
   function showMessage(title: string, message: string) {
     modalTitle = title;
     modalMessage = message;
+    modalContentHtml = null;
     showConfirm = false;
     confirmCallback = null;
     showModal = true;
@@ -51,8 +55,18 @@
     showModal = true;
   }
 
+  let modalBodyEl: HTMLDivElement;
+
+  afterUpdate(() => {
+    if (modalBodyEl && modalContentHtml) {
+      modalBodyEl.innerHTML = '';
+      modalBodyEl.appendChild(modalContentHtml);
+    }
+  });
+
   function closeModal() {
     showModal = false;
+    modalContentHtml = null;
     confirmCallback = null;
   }
 
@@ -83,7 +97,7 @@
   onMount(async () => {
     colorScheme = loadColorScheme();
     applyColorScheme(colorScheme);
-    radiusScale = parseFloat(loadSetting("radius-scale", "1")) || 1;
+    radiusScale = parseNumberSetting("radius-scale", 1);
     applyRadiusScale(radiusScale);
     bgStyle = loadSetting("bg-style", "pure");
     applyBgStyle(bgStyle);
@@ -95,11 +109,11 @@
     applyMotionLevel(motionLevel);
     customBgUrl = loadSetting("custom-bg-url", "");
     applyCustomBgUrl(customBgUrl);
-    bgOpacity = parseFloat(loadSetting("bg-opacity", "0.5")) || 0.5;
+    bgOpacity = parseNumberSetting("bg-opacity", 0.5);
     applyBgOpacity(bgOpacity);
-    cardOpacity = parseFloat(loadSetting("card-opacity", "1")) || 1;
+    cardOpacity = parseNumberSetting("card-opacity", 1);
     applyCardOpacity(cardOpacity);
-    titlebarOpacity = parseFloat(loadSetting("titlebar-opacity", "0.8")) || 0.8;
+    titlebarOpacity = parseNumberSetting("titlebar-opacity", 0.8);
     applyTitlebarOpacity(titlebarOpacity);
     applyTheme(loadTheme());
     await loadSettings();
@@ -121,17 +135,28 @@
       if (view === "library") { currentView = "library"; }
       else if (view === "detail" && data) { selectedAnime = data; currentView = "detail"; }
       else if (view === "settings") { currentView = "settings"; }
-      else if (view === "plugins") { currentView = "plugins"; }
     };
     w.__pluginShowModal = (options: any) => {
       modalTitle = options.title;
-      modalMessage = typeof options.content === 'string' ? options.content : '';
+      if (options.content instanceof HTMLElement) {
+        modalContentHtml = options.content;
+        modalMessage = '';
+      } else {
+        modalMessage = typeof options.content === 'string' ? options.content : '';
+        modalContentHtml = null;
+      }
       showConfirm = false;
       confirmCallback = null;
       showModal = true;
     };
     w.__pluginShowToast = (options: any) => {
       showMessage(options.message, options.type ?? 'info');
+    };
+    w.__pluginToolbarChanged = () => {
+      pluginToolbarVersion++;
+    };
+    w.__pluginPanelsChanged = () => {
+      pluginToolbarVersion++;
     };
   }
 
@@ -179,6 +204,13 @@
     } catch (_) {
       return fallback;
     }
+  }
+
+  function parseNumberSetting(key: string, fallback: number): number {
+    const raw = localStorage.getItem(key);
+    if (raw === null) return fallback;
+    const n = parseFloat(raw);
+    return isNaN(n) ? fallback : n;
   }
 
   function applyAttr(key: string, attr: string, value: string) {
@@ -291,6 +323,7 @@
     onBack={goBack}
     onScan={scanLibrary}
     onSettings={openSettings}
+    pluginToolbarButtons={currentPluginToolbarButtons}
   />
 
   <main class="main-content">
@@ -323,10 +356,7 @@
         onChangeCardOpacity={applyCardOpacity}
         titlebarOpacity={titlebarOpacity}
         onChangeTitlebarOpacity={applyTitlebarOpacity}
-        onOpenPlugins={() => currentView = "plugins"}
       />
-    {:else if currentView === "plugins"}
-      <PluginSettings onBack={() => currentView = "settings"} />
     {/if}
   </main>
 </div>
@@ -340,8 +370,10 @@
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <div class="modal-body">
-        <p>{modalMessage}</p>
+      <div class="modal-body" bind:this={modalBodyEl}>
+        {#if !modalContentHtml}
+          <p>{modalMessage}</p>
+        {/if}
       </div>
       <div class="modal-footer">
         {#if showConfirm}
@@ -362,5 +394,24 @@
     flex: 1;
     overflow-y: auto;
     padding: var(--space-8) var(--space-8) var(--space-12);
+    scrollbar-gutter: stable;
+  }
+
+  .main-content::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .main-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .main-content::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+    transition: background 0.2s ease;
+  }
+
+  .main-content::-webkit-scrollbar-thumb:hover {
+    background: var(--border-strong);
   }
 </style>
