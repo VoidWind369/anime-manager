@@ -476,11 +476,8 @@
 
   .settings-tabs {
     display: flex;
-    gap: var(--space-2);
-    margin-bottom: var(--space-4);
-    background: var(--surface-dim);
-    padding: 4px;
-    border-radius: var(--radius-lg);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-6);
   }
 
   .tab-btn {
@@ -489,30 +486,30 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-md);
-    font-size: 0.88rem;
+    padding: var(--space-4) var(--space-4);
+    font-size: 0.9rem;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: var(--text-tertiary);
     background: transparent;
     border: none;
+    border-bottom: 2px solid transparent;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
+    position: relative;
   }
 
   .tab-btn:hover {
     color: var(--text-primary);
-    background: var(--surface);
   }
 
   .tab-btn.active {
-    background: var(--card-bg);
     color: var(--accent-600);
-    box-shadow: var(--shadow-sm);
+    border-bottom-color: var(--accent-500);
   }
 
   :global([data-theme="dark"]) .tab-btn.active {
     color: var(--accent-400);
+    border-bottom-color: var(--accent-400);
   }
 
   .settings-card {
